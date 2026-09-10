@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://farmconnect-hawh.onrender.com";
 
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
   const toRadians = (value) => (value * Math.PI) / 180;
