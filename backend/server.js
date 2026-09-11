@@ -23,7 +23,6 @@ const JWT_SECRET =
 app.use(cors());
 app.use(express.json());
 
-
 // ===============================
 // AUTHENTICATION MIDDLEWARE
 // ===============================
@@ -31,7 +30,8 @@ app.use(express.json());
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  const token = authHeader && authHeader.split(" ")[1];
+  const token =
+    authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({
@@ -51,7 +51,6 @@ function authenticateToken(req, res, next) {
   });
 }
 
-
 // ===============================
 // HOME ROUTE
 // ===============================
@@ -61,7 +60,6 @@ app.get("/", (req, res) => {
     message: "FarmConnect backend is running 🌱",
   });
 });
-
 
 // ===============================
 // AUTH - SIGN UP
@@ -129,8 +127,25 @@ app.post("/api/auth/signup", async (req, res) => {
           : "Pending",
     });
 
+    // Create JWT token immediately after signup
+    const token = jwt.sign(
+      {
+        userId: user._id.toString(),
+        role: user.role,
+        name: user.name,
+        email: user.email,
+      },
+      JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    // IMPORTANT:
+    // Return token so frontend can store it
     res.status(201).json({
       message: "Account created successfully",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -150,7 +165,6 @@ app.post("/api/auth/signup", async (req, res) => {
   }
 });
 
-
 // ===============================
 // AUTH - LOGIN
 // ===============================
@@ -164,7 +178,8 @@ app.post("/api/auth/login", async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email and password are required",
+        message:
+          "Email and password are required",
       });
     }
 
@@ -192,7 +207,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: user._id.toString(),
         role: user.role,
         name: user.name,
         email: user.email,
@@ -225,7 +240,6 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-
 // ===============================
 // AUTH - CURRENT USER
 // ===============================
@@ -247,7 +261,10 @@ app.get(
 
       res.json(user);
     } catch (error) {
-      console.error("Get current user error:", error);
+      console.error(
+        "Get current user error:",
+        error
+      );
 
       res.status(500).json({
         message: "Server error",
@@ -255,7 +272,6 @@ app.get(
     }
   }
 );
-
 
 // ===============================
 // PRODUCE - ADD PRODUCE
@@ -298,63 +314,99 @@ app.post(
         });
       }
 
-      if (Number(quantity) < 0) {
+      const numericQuantity =
+        Number(quantity);
+
+      const numericPrice = Number(price);
+
+      if (
+        !Number.isFinite(numericQuantity) ||
+        numericQuantity < 0
+      ) {
         return res.status(400).json({
           message:
-            "Quantity cannot be negative",
+            "Quantity must be a valid non-negative number",
         });
       }
 
-      if (Number(price) < 0) {
+      if (
+        !Number.isFinite(numericPrice) ||
+        numericPrice < 0
+      ) {
         return res.status(400).json({
           message:
-            "Price cannot be negative",
+            "Price must be a valid non-negative number",
         });
       }
 
       if (
         latitude !== null &&
         latitude !== undefined &&
-        latitude !== "" &&
-        (Number(latitude) < -90 ||
-          Number(latitude) > 90)
+        latitude !== ""
       ) {
-        return res.status(400).json({
-          message: "Invalid latitude",
-        });
+        const numericLatitude =
+          Number(latitude);
+
+        if (
+          !Number.isFinite(numericLatitude) ||
+          numericLatitude < -90 ||
+          numericLatitude > 90
+        ) {
+          return res.status(400).json({
+            message: "Invalid latitude",
+          });
+        }
       }
 
       if (
         longitude !== null &&
         longitude !== undefined &&
-        longitude !== "" &&
-        (Number(longitude) < -180 ||
-          Number(longitude) > 180)
+        longitude !== ""
       ) {
-        return res.status(400).json({
-          message: "Invalid longitude",
-        });
+        const numericLongitude =
+          Number(longitude);
+
+        if (
+          !Number.isFinite(numericLongitude) ||
+          numericLongitude < -180 ||
+          numericLongitude > 180
+        ) {
+          return res.status(400).json({
+            message: "Invalid longitude",
+          });
+        }
       }
 
       const produce = await Produce.create({
         farmerId: req.user.userId,
-        name,
-        quantity: Number(quantity),
-        price: Number(price),
-        location,
+
+        name: name.trim(),
+
+        quantity: numericQuantity,
+
+        price: numericPrice,
+
+        location: location.trim(),
+
         latitude:
           latitude === "" ||
-          latitude === undefined
+          latitude === undefined ||
+          latitude === null
             ? null
             : Number(latitude),
+
         longitude:
           longitude === "" ||
-          longitude === undefined
+          longitude === undefined ||
+          longitude === null
             ? null
             : Number(longitude),
+
         harvestDate,
+
         farmingMethod:
           farmingMethod || "",
+
         pesticide:
           pesticide || "",
       });
@@ -365,7 +417,10 @@ app.post(
         produce,
       });
     } catch (error) {
-      console.error("Add produce error:", error);
+      console.error(
+        "Add produce error:",
+        error
+      );
 
       res.status(500).json({
         message: "Server error",
@@ -373,7 +428,6 @@ app.post(
     }
   }
 );
-
 
 // ===============================
 // PRODUCE - GET ALL
@@ -383,16 +437,20 @@ app.get(
   "/api/produce",
   async (req, res) => {
     try {
-      const produce = await Produce.find()
-        .populate(
-          "farmerId",
-          "name email location verificationStatus"
-        )
-        .sort({ createdAt: -1 });
+      const produce =
+        await Produce.find()
+          .populate(
+            "farmerId",
+            "name email location verificationStatus"
+          )
+          .sort({ createdAt: -1 });
 
       res.json(produce);
     } catch (error) {
-      console.error("Get produce error:", error);
+      console.error(
+        "Get produce error:",
+        error
+      );
 
       res.status(500).json({
         message: "Server error",
@@ -400,7 +458,6 @@ app.get(
     }
   }
 );
-
 
 // ===============================
 // PRODUCE - FARMER'S PRODUCE
@@ -418,9 +475,10 @@ app.get(
         });
       }
 
-      const produce = await Produce.find({
-        farmerId: req.user.userId,
-      }).sort({ createdAt: -1 });
+      const produce =
+        await Produce.find({
+          farmerId: req.user.userId,
+        }).sort({ createdAt: -1 });
 
       res.json(produce);
     } catch (error) {
@@ -435,7 +493,6 @@ app.get(
     }
   }
 );
-
 
 // ===============================
 // ORDERS - CREATE ORDER
@@ -472,7 +529,9 @@ app.post(
         Number(quantity);
 
       if (
-        !Number.isFinite(requestedQuantity) ||
+        !Number.isFinite(
+          requestedQuantity
+        ) ||
         requestedQuantity <= 0
       ) {
         return res.status(400).json({
@@ -522,15 +581,11 @@ app.post(
           farmerId: produce.farmerId,
           buyerId: buyer._id,
           buyerType: buyer.role,
-          quantity:
-            requestedQuantity,
-          pricePerKg:
-            produce.price,
+          quantity: requestedQuantity,
+          pricePerKg: produce.price,
           totalPrice,
-          buyerName:
-            buyer.name,
-          buyerLocation:
-            buyer.location,
+          buyerName: buyer.name,
+          buyerLocation: buyer.location,
           status: "Pending",
         });
 
@@ -556,7 +611,6 @@ app.post(
     }
   }
 );
-
 
 // ===============================
 // ORDERS - FARMER ORDERS
@@ -601,7 +655,6 @@ app.get(
     }
   }
 );
-
 
 // ===============================
 // ORDERS - BUYER ORDERS
@@ -650,7 +703,6 @@ app.get(
   }
 );
 
-
 // ===============================
 // ORDERS - FIND BY BUYER NAME
 // ===============================
@@ -678,7 +730,7 @@ app.get(
       res.json(orders);
     } catch (error) {
       console.error(
-        "Get buyer orders error:",
+        "Get orders by buyer name error:",
         error
       );
 
@@ -688,7 +740,6 @@ app.get(
     }
   }
 );
-
 
 // ===============================
 // ORDERS - UPDATE STATUS
@@ -706,9 +757,7 @@ app.patch(
         });
       }
 
-      const {
-        status,
-      } = req.body;
+      const { status } = req.body;
 
       const allowedStatuses = [
         "Pending",
@@ -771,7 +820,6 @@ app.patch(
   }
 );
 
-
 // ===============================
 // ADMIN - GET ALL USERS
 // ===============================
@@ -783,8 +831,7 @@ app.get(
     try {
       if (req.user.role !== "Admin") {
         return res.status(403).json({
-          message:
-            "Admin access required",
+          message: "Admin access required",
         });
       }
 
@@ -807,7 +854,6 @@ app.get(
   }
 );
 
-
 // ===============================
 // ADMIN - VERIFY USER
 // ===============================
@@ -819,8 +865,7 @@ app.patch(
     try {
       if (req.user.role !== "Admin") {
         return res.status(403).json({
-          message:
-            "Admin access required",
+          message: "Admin access required",
         });
       }
 
@@ -831,8 +876,7 @@ app.patch(
 
       if (!user) {
         return res.status(404).json({
-          message:
-            "User not found",
+          message: "User not found",
         });
       }
 
@@ -866,7 +910,6 @@ app.patch(
   }
 );
 
-
 // ===============================
 // ADMIN - REJECT USER
 // ===============================
@@ -878,8 +921,7 @@ app.patch(
     try {
       if (req.user.role !== "Admin") {
         return res.status(403).json({
-          message:
-            "Admin access required",
+          message: "Admin access required",
         });
       }
 
@@ -890,8 +932,7 @@ app.patch(
 
       if (!user) {
         return res.status(404).json({
-          message:
-            "User not found",
+          message: "User not found",
         });
       }
 
@@ -925,7 +966,6 @@ app.patch(
   }
 );
 
-
 // ===============================
 // 404 HANDLER
 // ===============================
@@ -935,7 +975,6 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
-
 
 // ===============================
 // MONGODB CONNECTION
@@ -950,7 +989,7 @@ mongoose
 
     app.listen(PORT, () => {
       console.log(
-        `FarmConnect backend running on http://localhost:${PORT}`
+        `FarmConnect backend running on port ${PORT}`
       );
     });
   })
