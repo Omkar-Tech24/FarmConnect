@@ -185,26 +185,30 @@ function Navbar({
 function HomePage({ user, setPage }) {
   return (
     <>
-      <section className="hero">
+      {/* =====================================================
+          HERO
+      ===================================================== */}
+      <section className="hero hero-modern">
         <div className="hero-content">
           <div className="hero-badge">
-            🌱 Direct • Transparent • Local
+            <span>🌱</span>
+            DIRECT • TRANSPARENT • LOCAL
           </div>
 
           <h1>
-            Fresh From the
-            <span> Farm, Direct to You.</span>
+            Fresh From Indian
+            <span> Farms. Direct To You.</span>
           </h1>
 
-          <p>
-            FarmConnect connects farmers directly with
-            consumers and retailers — making fresh produce
-            more accessible, transparent and fairly priced.
+          <p className="hero-description">
+            FarmConnect connects farmers directly with consumers
+            and retailers, making fresh agricultural produce more
+            accessible, transparent and fairly priced.
           </p>
 
           <div className="hero-buttons">
             <button
-              className="primary-btn"
+              className="primary-btn hero-primary"
               type="button"
               onClick={() => setPage("marketplace")}
             >
@@ -213,7 +217,7 @@ function HomePage({ user, setPage }) {
 
             {!user && (
               <button
-                className="secondary-btn"
+                className="secondary-btn hero-secondary"
                 type="button"
                 onClick={() => setPage("auth")}
               >
@@ -223,52 +227,75 @@ function HomePage({ user, setPage }) {
           </div>
 
           <div className="hero-trust">
-            <div>
-              <strong>🌾</strong>
-              <span>Direct from farmers</span>
+            <div className="hero-trust-item">
+              <div className="trust-icon">🌾</div>
+              <div>
+                <strong>Direct from farms</strong>
+                <span>Buy closer to the source</span>
+              </div>
             </div>
-            <div>
-              <strong>💰</strong>
-              <span>Transparent pricing</span>
+
+            <div className="hero-trust-item">
+              <div className="trust-icon">₹</div>
+              <div>
+                <strong>Transparent pricing</strong>
+                <span>See the listed farm price</span>
+              </div>
             </div>
-            <div>
-              <strong>🔍</strong>
-              <span>Food information</span>
+
+            <div className="hero-trust-item">
+              <div className="trust-icon">🔍</div>
+              <div>
+                <strong>Know your food</strong>
+                <span>View farming information</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="hero-visual">
-          <div className="farm-circle">🌾</div>
+        {/* REAL FARMER IMAGE */}
+        <div className="hero-photo-area">
+          <div className="hero-photo-frame">
+            <img
+              src="/images/hero-farmer.jpg"
+              alt="Indian farmer working in an agricultural field"
+              className="hero-farmer-image"
+            />
 
-          <div className="floating-card floating-card-one">
-            <span>🥬</span>
+            <div className="photo-overlay"></div>
+
+            <div className="photo-location">
+              <span>📍</span>
+              <div>
+                <strong>Indian Farms</strong>
+                <small>Fresh produce • Local farmers</small>
+              </div>
+            </div>
+          </div>
+
+          <div className="hero-floating-card card-top">
+            <div className="floating-icon">🥬</div>
             <div>
               <strong>Fresh Produce</strong>
-              <small>Direct from farm</small>
+              <small>Direct from the farm</small>
             </div>
           </div>
 
-          <div className="floating-card floating-card-two">
-            <span>📍</span>
+          <div className="hero-floating-card card-bottom">
+            <div className="floating-check">✓</div>
             <div>
-              <strong>Local Farmers</strong>
-              <small>Near your location</small>
-            </div>
-          </div>
-
-          <div className="floating-card floating-card-three">
-            <span>✅</span>
-            <div>
-              <strong>Transparent</strong>
-              <small>Know your food</small>
+              <strong>Food Transparency</strong>
+              <small>Know how it was grown</small>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <div className="section-heading">
+      {/* =====================================================
+          WHY FARMCONNECT
+      ===================================================== */}
+      <section className="section modern-section">
+        <div className="section-heading modern-heading">
           <span className="section-label">WHY FARMCONNECT</span>
 
           <h2>
@@ -277,91 +304,124 @@ function HomePage({ user, setPage }) {
           </h2>
 
           <p>
-            A simple marketplace designed to reduce unnecessary
-            intermediaries and make agricultural trade more transparent.
+            A farm-to-buyer marketplace designed to make
+            agricultural trade simpler and more transparent.
           </p>
         </div>
 
-        <div className="feature-grid">
-          <div className="feature-card">
+        <div className="feature-grid modern-feature-grid">
+          <div className="feature-card modern-feature-card">
             <div className="feature-icon">🚜</div>
+
+            <span className="feature-number">01</span>
+
             <h3>Direct From Farmers</h3>
+
             <p>
               Farmers can list their produce directly and reach
               consumers and retailers without unnecessary layers.
             </p>
-            <div className="feature-link">Farmer → Buyer</div>
+
+            <div className="feature-link">
+              Farmer → Buyer
+            </div>
           </div>
 
-          <div className="feature-card">
-            <div className="feature-icon">💰</div>
+          <div className="feature-card modern-feature-card">
+            <div className="feature-icon">₹</div>
+
+            <span className="feature-number">02</span>
+
             <h3>Price Transparency</h3>
+
             <p>
-              Buyers can see the farmer&apos;s listed price before
+              Buyers can see the farmer's listed price before
               placing an order.
             </p>
-            <div className="feature-link">Clear pricing</div>
+
+            <div className="feature-link">
+              Clear pricing
+            </div>
           </div>
 
-          <div className="feature-card">
+          <div className="feature-card modern-feature-card">
             <div className="feature-icon">🔍</div>
+
+            <span className="feature-number">03</span>
+
             <h3>Food Transparency</h3>
+
             <p>
-              Buyers can view farming method, pesticide information
-              and harvest date declared by the farmer.
+              View farming method, pesticide information and
+              harvest date declared by the farmer.
             </p>
-            <div className="feature-link">Know your food</div>
+
+            <div className="feature-link">
+              Know your food
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="how-section">
-        <div className="section-heading">
+      {/* =====================================================
+          HOW IT WORKS
+      ===================================================== */}
+      <section className="how-section modern-how-section">
+        <div className="section-heading modern-heading">
           <span className="section-label">HOW IT WORKS</span>
 
           <h2>
-            From farm to your
-            <span> doorstep.</span>
+            From the <span>farm</span> to your doorstep.
           </h2>
 
-          <p>FarmConnect keeps the buying process simple.</p>
+          <p>
+            Four simple steps connect farmers with buyers.
+          </p>
         </div>
 
-        <div className="steps-grid">
-          <div className="step-card">
+        <div className="steps-grid modern-steps-grid">
+          <div className="step-card modern-step-card">
             <div className="step-number">01</div>
             <div className="step-icon">🌾</div>
+
             <h3>Farmer Lists Produce</h3>
+
             <p>
-              Farmers add their available produce, quantity,
-              price and food information.
+              Farmers add produce, quantity, price and food
+              information.
             </p>
           </div>
 
-          <div className="step-card">
+          <div className="step-card modern-step-card">
             <div className="step-number">02</div>
             <div className="step-icon">🛒</div>
+
             <h3>Buyer Places Order</h3>
+
             <p>
               Consumers or retailers browse produce and place
               an order.
             </p>
           </div>
 
-          <div className="step-card">
+          <div className="step-card modern-step-card">
             <div className="step-number">03</div>
             <div className="step-icon">🤝</div>
+
             <h3>Farmer Accepts</h3>
+
             <p>
               The farmer receives the order and prepares the
               requested produce.
             </p>
           </div>
 
-          <div className="step-card">
+          <div className="step-card modern-step-card">
             <div className="step-number">04</div>
             <div className="step-icon">🚚</div>
+
             <h3>Delivery</h3>
+
             <p>
               The order moves towards the buyer until it is
               completed.
@@ -370,10 +430,15 @@ function HomePage({ user, setPage }) {
         </div>
       </section>
 
-      <section className="transparency-section">
+      {/* =====================================================
+          FOOD TRANSPARENCY
+      ===================================================== */}
+      <section className="transparency-section modern-transparency">
         <div className="transparency-content">
           <div className="transparency-text">
-            <span className="section-label">FOOD TRANSPARENCY</span>
+            <span className="section-label">
+              FOOD TRANSPARENCY
+            </span>
 
             <h2>
               Know more about
@@ -382,7 +447,8 @@ function HomePage({ user, setPage }) {
 
             <p>
               FarmConnect gives buyers information declared by
-              the farmer about how their produce was grown and harvested.
+              the farmer about how produce was grown and
+              harvested.
             </p>
 
             <button
@@ -422,14 +488,19 @@ function HomePage({ user, setPage }) {
         </div>
       </section>
 
+      {/* =====================================================
+          CTA
+      ===================================================== */}
       {!user && (
-        <section className="cta-section">
-          <div>
-            <span className="section-label">GET STARTED</span>
+        <section className="cta-section modern-cta">
+          <div className="cta-inner">
+            <span className="section-label">
+              GET STARTED
+            </span>
 
             <h2>
-              Ready to connect with
-              <span> local farms?</span>
+              Your food has a story.
+              <span> Know it.</span>
             </h2>
 
             <p>
@@ -448,7 +519,10 @@ function HomePage({ user, setPage }) {
         </section>
       )}
 
-      <footer className="footer">
+      {/* =====================================================
+          FOOTER
+      ===================================================== */}
+      <footer className="footer modern-footer">
         <div className="footer-brand">
           <h3>🌱 FarmConnect</h3>
           <p>Connecting farms with people.</p>
@@ -889,6 +963,15 @@ function FarmerPage({
                 <p>
                   <strong>Total:</strong> ₹{order.totalPrice}
                 </p>
+                <div className="transparency-box">
+                  <strong>💳 Payment</strong>
+                  <p>
+                    Method: {order.paymentMethod === "ONLINE" ? "Online Payment" : "Cash on Delivery"}
+                  </p>
+                  <p>
+                    Status: {order.paymentStatus === "Paid" ? "Paid ✅" : "Payment Pending"}
+                  </p>
+                </div>
                 <p>
                   <strong>Location:</strong> {order.buyerLocation}
                 </p>
@@ -975,6 +1058,7 @@ function MarketplacePage({
   user,
   message,
   openOrderPage,
+  openFarmerProfile,
   setPage,
 }) {
   const [search, setSearch] = useState("");
@@ -1287,11 +1371,21 @@ function MarketplacePage({
               </div>
 
               {item.farmerId && (
-                <div className="transparency-box">
-                  <strong>👨‍🌾 Farmer</strong>
-                  <p>Name: {item.farmerId.name}</p>
-                  <p>Location: {item.farmerId.location}</p>
-                </div>
+                <>
+                  <div className="transparency-box">
+                    <strong>👨‍🌾 Farmer</strong>
+                    <p>Name: {item.farmerId.name}</p>
+                    <p>Location: {item.farmerId.location}</p>
+                  </div>
+
+                  <button
+                    className="secondary-btn full-btn"
+                    type="button"
+                    onClick={() => openFarmerProfile(item.farmerId)}
+                  >
+                    👨‍🌾 View Farmer
+                  </button>
+                </>
               )}
 
               <div className="transparency-box">
@@ -1333,6 +1427,101 @@ function MarketplacePage({
 }
 
 /* =========================================================
+   FARMER PROFILE
+   ========================================================= */
+
+function FarmerProfile({
+  farmer,
+  produce,
+  openOrderPage,
+  setPage,
+}) {
+  if (!farmer) {
+    return (
+      <div className="page-container">
+        <div className="empty-state">
+          <h2>Farmer not found</h2>
+          <button
+            className="primary-btn"
+            type="button"
+            onClick={() => setPage("marketplace")}
+          >
+            Back to Marketplace
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const farmerProduce = produce.filter(
+    (item) =>
+      item.farmerId?._id === farmer._id ||
+      String(item.farmerId?._id) === String(farmer._id)
+  );
+
+  return (
+    <div className="page-container">
+      <div className="page-header">
+        <span className="section-label">FARMER PROFILE</span>
+        <h1>👨‍🌾 {farmer.name}</h1>
+        <p>Connect directly with a farmer on FarmConnect.</p>
+      </div>
+
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <div className="farmer-profile-avatar">👨‍🌾</div>
+          <h2>{farmer.name}</h2>
+          <p>
+            <strong>📍 Location:</strong> {farmer.location || "Not provided"}
+          </p>
+          <p>
+            <strong>✉️ Email:</strong> {farmer.email || "Not provided"}
+          </p>
+
+          <button
+            className="secondary-btn"
+            type="button"
+            onClick={() => setPage("marketplace")}
+          >
+            ← Back to Marketplace
+          </button>
+        </div>
+
+        <div className="dashboard-card">
+          <h2>Produce Listed</h2>
+
+          {farmerProduce.length === 0 ? (
+            <div className="empty-small">
+              <span>🌾</span>
+              <p>No currently available produce.</p>
+            </div>
+          ) : (
+            <div className="mini-list">
+              {farmerProduce.map((item) => (
+                <div className="mini-item" key={item._id}>
+                  <strong>{item.name}</strong>
+                  <span>₹{item.price}/kg</span>
+                  <span>{item.quantity} kg</span>
+                  {Number(item.quantity) > 0 && (
+                    <button
+                      className="primary-btn"
+                      type="button"
+                      onClick={() => openOrderPage(item)}
+                    >
+                      Buy
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
    RETAILER
    ========================================================= */
 
@@ -1341,6 +1530,7 @@ function RetailerPage({
   message,
   produce,
   openOrderPage,
+  openFarmerProfile,
   setPage,
 }) {
   if (!user || user.role !== "Retailer") {
@@ -1378,6 +1568,7 @@ function RetailerPage({
         user={user}
         message={message}
         openOrderPage={openOrderPage}
+        openFarmerProfile={openFarmerProfile}
         setPage={setPage}
       />
     </div>
@@ -1397,6 +1588,8 @@ function OrderPage({
   buyerName,
   buyerLocation,
   setBuyerLocation,
+  paymentMethod,
+  setPaymentMethod,
   handlePlaceOrder,
   loading,
   message,
@@ -1459,9 +1652,7 @@ function OrderPage({
           {selectedProduce.farmerId && (
             <div className="transparency-box">
               <strong>👨‍🌾 Farmer</strong>
-              <p>
-                Name: {selectedProduce.farmerId.name}
-              </p>
+              <p>Name: {selectedProduce.farmerId.name}</p>
               <p>
                 Location: {selectedProduce.farmerId.location}
               </p>
@@ -1471,14 +1662,10 @@ function OrderPage({
           <div className="transparency-box">
             <strong>🔍 Food Information</strong>
             <p>
-              Farming:{" "}
-              {selectedProduce.farmingMethod ||
-                "Not provided"}
+              Farming: {selectedProduce.farmingMethod || "Not provided"}
             </p>
             <p>
-              Pesticide:{" "}
-              {selectedProduce.pesticide ||
-                "Not provided"}
+              Pesticide: {selectedProduce.pesticide || "Not provided"}
             </p>
           </div>
         </div>
@@ -1528,6 +1715,45 @@ function OrderPage({
             required
           />
 
+          <div className="payment-section">
+            <h3>💳 Payment Method</h3>
+
+            <label className="payment-option">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="COD"
+                checked={paymentMethod === "COD"}
+                onChange={(event) =>
+                  setPaymentMethod(event.target.value)
+                }
+              />
+              <span>
+                <strong>💵 Cash on Delivery</strong>
+                <small>Pay when your produce is delivered.</small>
+              </span>
+            </label>
+
+            <label className="payment-option">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="ONLINE"
+                checked={paymentMethod === "ONLINE"}
+                onChange={(event) =>
+                  setPaymentMethod(event.target.value)
+                }
+              />
+              <span>
+                <strong>💳 Online Payment</strong>
+                <small>
+                  Pay securely using Razorpay — UPI, cards and
+                  supported online methods.
+                </small>
+              </span>
+            </label>
+          </div>
+
           <div className="order-total">
             <span>Total Price</span>
             <strong>₹{total}</strong>
@@ -1538,13 +1764,20 @@ function OrderPage({
             type="submit"
             disabled={loading}
           >
-            {loading ? "Placing Order..." : "Confirm Order"}
+            {loading
+              ? paymentMethod === "ONLINE"
+                ? "Opening Payment..."
+                : "Placing Order..."
+              : paymentMethod === "ONLINE"
+                ? "Pay & Place Order"
+                : "Place COD Order"}
           </button>
 
           <button
             className="secondary-btn"
             type="button"
             onClick={() => setPage("marketplace")}
+            disabled={loading}
           >
             Cancel
           </button>
@@ -1632,6 +1865,24 @@ function MyOrdersPage({
                 <strong>Total:</strong> ₹{order.totalPrice}
               </p>
 
+              <div className="transparency-box">
+                <strong>💳 Payment</strong>
+                <p>
+                  Method: {order.paymentMethod === "ONLINE" ? "Online Payment" : "Cash on Delivery"}
+                </p>
+                <p>
+                  Status: {order.paymentStatus === "Paid" ? "Paid ✅" : "Payment Pending"}
+                </p>
+              </div>
+
+              {order.farmerId && (
+                <div className="transparency-box">
+                  <strong>👨‍🌾 Farmer</strong>
+                  <p>Name: {order.farmerId.name}</p>
+                  <p>Location: {order.farmerId.location}</p>
+                </div>
+              )}
+
               <p>
                 <strong>Delivery:</strong>{" "}
                 {order.buyerLocation}
@@ -1678,6 +1929,9 @@ function App() {
   const [selectedProduce, setSelectedProduce] =
     useState(null);
 
+  const [selectedFarmer, setSelectedFarmer] =
+    useState(null);
+
   const [buyerType, setBuyerType] =
     useState("Consumer");
 
@@ -1685,6 +1939,9 @@ function App() {
   const [buyerName, setBuyerName] = useState("");
   const [buyerLocation, setBuyerLocation] =
     useState("");
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("COD");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -1782,7 +2039,14 @@ function App() {
   }
 
   async function fetchMyOrders() {
-    if (!token) return;
+    if (
+      !token ||
+      !user ||
+      (user.role !== "Consumer" &&
+        user.role !== "Retailer")
+    ) {
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -1813,7 +2077,12 @@ function App() {
   useEffect(() => {
     if (!token || !user) return;
 
-    fetchMyOrders();
+    if (
+      user.role === "Consumer" ||
+      user.role === "Retailer"
+    ) {
+      fetchMyOrders();
+    }
 
     if (user.role === "Farmer") {
       fetchOrders();
@@ -2054,6 +2323,21 @@ function App() {
   }
 
   /* -------------------------------------------------------
+     OPEN FARMER PROFILE
+     ------------------------------------------------------- */
+
+  function openFarmerProfile(farmer) {
+    if (!farmer) {
+      setMessage("Farmer information is not available.");
+      return;
+    }
+
+    setSelectedFarmer(farmer);
+    setMessage("");
+    setPage("farmerprofile");
+  }
+
+  /* -------------------------------------------------------
      OPEN ORDER PAGE
      ------------------------------------------------------- */
 
@@ -2079,6 +2363,7 @@ function App() {
     setOrderQuantity(1);
     setBuyerName(user.name);
     setBuyerLocation(user.location || "");
+    setPaymentMethod("COD");
     setMessage("");
     setPage("order");
   }
@@ -2086,6 +2371,21 @@ function App() {
   /* -------------------------------------------------------
      PLACE ORDER
      ------------------------------------------------------- */
+
+  function loadRazorpayScript() {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
 
   async function handlePlaceOrder(event) {
     event.preventDefault();
@@ -2103,7 +2403,7 @@ function App() {
 
     const quantity = Number(orderQuantity);
 
-    if (quantity < 1) {
+    if (!Number.isFinite(quantity) || quantity < 1) {
       setMessage("Order quantity must be at least 1 kg.");
       return;
     }
@@ -2113,11 +2413,59 @@ function App() {
       return;
     }
 
+    if (!buyerLocation.trim()) {
+      setMessage("Please enter your delivery location.");
+      return;
+    }
+
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch(
+      /* ---------------- COD ---------------- */
+      if (paymentMethod === "COD") {
+        const response = await fetch(
+          `${API_URL}/api/orders`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              produceId: selectedProduce._id,
+              quantity,
+              buyerName: user.name,
+              buyerLocation: buyerLocation.trim(),
+              paymentMethod: "COD",
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(data.message || "Unable to place order.");
+          return;
+        }
+
+        setMessage("Order placed with Cash on Delivery! 🎉");
+        setSelectedProduce(null);
+        await fetchProduce();
+        await fetchMyOrders();
+        setPage("myorders");
+        return;
+      }
+
+      /* ---------------- ONLINE PAYMENT ---------------- */
+      const scriptLoaded = await loadRazorpayScript();
+
+      if (!scriptLoaded) {
+        setMessage("Unable to load the online payment system.");
+        return;
+      }
+
+      const createResponse = await fetch(
         `${API_URL}/api/orders`,
         {
           method: "POST",
@@ -2127,34 +2475,127 @@ function App() {
           },
           body: JSON.stringify({
             produceId: selectedProduce._id,
-            buyerType: user.role,
             quantity,
             buyerName: user.name,
-            buyerLocation,
+            buyerLocation: buyerLocation.trim(),
+            paymentMethod: "ONLINE",
           }),
         }
       );
 
-      const data = await response.json();
+      const razorpayData = await createResponse.json();
 
-      if (!response.ok) {
+      if (!createResponse.ok) {
         setMessage(
-          data.message || "Unable to place order."
+          razorpayData.message ||
+            "Unable to start online payment."
         );
         return;
       }
 
-      setMessage("Order placed successfully! 🎉");
-      setSelectedProduce(null);
+      if (
+        !razorpayData.razorpayKey ||
+        !razorpayData.razorpayOrder?.id
+      ) {
+        setMessage(
+          "Online payment could not be started. Please check Razorpay configuration."
+        );
+        return;
+      }
 
-      await fetchProduce();
-      await fetchMyOrders();
+      const options = {
+        key: razorpayData.razorpayKey,
+        amount: razorpayData.razorpayOrder?.amount,
+        currency: razorpayData.razorpayOrder?.currency || "INR",
+        name: "FarmConnect",
+        description: `${selectedProduce.name} - ${quantity} kg`,
+        order_id: razorpayData.razorpayOrder?.id,
+        prefill: {
+          name: user.name,
+          email: user.email,
+        },
+        notes: {
+          delivery_location: buyerLocation.trim(),
+        },
+        theme: {
+          color: "#2f7d32",
+        },
+        handler: async function (paymentResponse) {
+          try {
+            setMessage("Verifying your payment...");
 
-      setPage("myorders");
+            const verifyResponse = await fetch(
+              `${API_URL}/api/payments/verify`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  produceId: selectedProduce._id,
+                  quantity,
+                  buyerName: user.name,
+                  buyerLocation: buyerLocation.trim(),
+                  razorpayOrderId:
+                    paymentResponse.razorpay_order_id,
+                  razorpayPaymentId:
+                    paymentResponse.razorpay_payment_id,
+                  razorpaySignature:
+                    paymentResponse.razorpay_signature,
+                }),
+              }
+            );
+
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok) {
+              setMessage(
+                verifyData.message ||
+                  "Payment verification failed."
+              );
+              return;
+            }
+
+            setMessage(
+              "Payment successful and order confirmed! 🎉"
+            );
+            setSelectedProduce(null);
+            await fetchProduce();
+            await fetchMyOrders();
+            setPage("myorders");
+          } catch (error) {
+            console.error(
+              "Payment verification error:",
+              error
+            );
+            setMessage(
+              "Payment was completed, but order verification could not be completed. Please check My Orders before trying again."
+            );
+          } finally {
+            setLoading(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setMessage("Online payment was cancelled.");
+            setLoading(false);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.on("payment.failed", function (response) {
+        console.error("Razorpay payment failed:", response.error);
+        setMessage("Online payment failed. Your order was not created.");
+        setLoading(false);
+      });
+
+      razorpay.open();
     } catch (error) {
-      console.error("Place order error:", error);
+      console.error("Place order/payment error:", error);
       setMessage("Unable to connect to server.");
-    } finally {
       setLoading(false);
     }
   }
@@ -2251,6 +2692,17 @@ function App() {
             user={user}
             message={message}
             openOrderPage={openOrderPage}
+            openFarmerProfile={openFarmerProfile}
+            setPage={setPage}
+          />
+        );
+
+      case "farmerprofile":
+        return (
+          <FarmerProfile
+            farmer={selectedFarmer}
+            produce={produce}
+            openOrderPage={openOrderPage}
             setPage={setPage}
           />
         );
@@ -2262,6 +2714,7 @@ function App() {
             message={message}
             produce={produce}
             openOrderPage={openOrderPage}
+            openFarmerProfile={openFarmerProfile}
             setPage={setPage}
           />
         );
@@ -2277,6 +2730,8 @@ function App() {
             buyerName={buyerName}
             buyerLocation={buyerLocation}
             setBuyerLocation={setBuyerLocation}
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
             handlePlaceOrder={handlePlaceOrder}
             loading={loading}
             message={message}

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    // The produce being ordered
     produceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Produce",
@@ -14,14 +13,12 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    // The farmer who owns the produce
     farmerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // The buyer who placed the order
     buyerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -43,11 +40,13 @@ const orderSchema = new mongoose.Schema(
     pricePerKg: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     totalPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     buyerName: {
@@ -58,6 +57,36 @@ const orderSchema = new mongoose.Schema(
     buyerLocation: {
       type: String,
       required: true,
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ["COD", "ONLINE"],
+      default: "COD",
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+
+    // Razorpay fields are used only for online payments.
+    // COD orders do not need a razorpayOrderId.
+    razorpayOrderId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    razorpayPaymentId: {
+      type: String,
+      default: "",
+    },
+
+    razorpaySignature: {
+      type: String,
+      default: "",
     },
 
     status: {

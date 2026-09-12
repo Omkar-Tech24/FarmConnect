@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const Razorpay = require("razorpay");
 
 const Produce = require("./models/Produce");
 const Order = require("./models/Order");
@@ -13,47 +15,84 @@ const User = require("./models/User");
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+
 const JWT_SECRET =
   process.env.JWT_SECRET || "farmconnect_secret_2026";
 
-// ===============================
-// MIDDLEWARE
-// ===============================
+/* =========================================================
+   RAZORPAY CONFIGURATION
+   ========================================================= */
+
+let razorpay = null;
+
+if (
+  process.env.RAZORPAY_KEY_ID &&
+  process.env.RAZORPAY_KEY_SECRET
+) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  console.log("Razorpay configured successfully.");
+} else {
+  console.log(
+    "Razorpay keys not configured. COD will still work."
+  );
+}
+
+/* =========================================================
+   MIDDLEWARE
+   ========================================================= */
 
 app.use(cors());
 app.use(express.json());
 
-// ===============================
-// AUTHENTICATION MIDDLEWARE
-// ===============================
+/* =========================================================
+   AUTHENTICATION MIDDLEWARE
+   ========================================================= */
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  const token =
-    authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
+  if (!authHeader) {
     return res.status(401).json({
-      message: "Access token required",
+      message: "Authentication required.",
     });
   }
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        message: "Invalid or expired token",
-      });
-    }
+  const parts = authHeader.split(" ");
 
-    req.user = user;
+  if (
+    parts.length !== 2 ||
+    parts[0] !== "Bearer"
+  ) {
+    return res.status(401).json({
+      message: "Invalid authorization format.",
+    });
+  }
+
+  const token = parts[1];
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      JWT_SECRET
+    );
+
+    req.user = decoded;
+
     next();
-  });
+  } catch (error) {
+    return res.status(403).json({
+      message: "Invalid or expired token.",
+    });
+  }
 }
 
-// ===============================
-// HOME ROUTE
-// ===============================
+/* =========================================================
+   HOME
+   ========================================================= */
 
 app.get("/", (req, res) => {
   res.json({
@@ -61,221 +100,234 @@ app.get("/", (req, res) => {
   });
 });
 
-// ===============================
-// AUTH - SIGN UP
-// ===============================
+/* =========================================================
+   SIGNUP
+   ========================================================= */
 
-app.post("/api/auth/signup", async (req, res) => {
-  try {
-    const {
-      name,
-      email,
-      password,
-      location,
-      role,
-    } = req.body;
-
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !location ||
-      !role
-    ) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-    }
-
-    const allowedRoles = [
-      "Farmer",
-      "Consumer",
-      "Retailer",
-      "Admin",
-    ];
-
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        message: "Invalid role",
-      });
-    }
-
-    const existingUser = await User.findOne({
-      email: email.toLowerCase(),
-    });
-
-    if (existingUser) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      password,
-      10
-    );
-
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      location,
-      role,
-      verificationStatus:
-        role === "Consumer"
-          ? "Verified"
-          : "Pending",
-    });
-
-    // Create JWT token immediately after signup
-    const token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        role: user.role,
-        name: user.name,
-        email: user.email,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-
-    // IMPORTANT:
-    // Return token so frontend can store it
-    res.status(201).json({
-      message: "Account created successfully",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        location: user.location,
-        role: user.role,
-        verificationStatus:
-          user.verificationStatus,
-      },
-    });
-  } catch (error) {
-    console.error("Signup error:", error);
-
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-});
-
-// ===============================
-// AUTH - LOGIN
-// ===============================
-
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const {
-      email,
-      password,
-    } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        message:
-          "Email and password are required",
-      });
-    }
-
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    });
-
-    if (!user) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
-    }
-
-    const passwordMatch =
-      await bcrypt.compare(
+app.post(
+  "/api/auth/signup",
+  async (req, res) => {
+    try {
+      const {
+        name,
+        email,
         password,
-        user.password
+        location,
+        role,
+      } = req.body;
+
+      if (
+        !name ||
+        !email ||
+        !password ||
+        !location ||
+        !role
+      ) {
+        return res.status(400).json({
+          message:
+            "Please fill all required fields.",
+        });
+      }
+
+      const allowedRoles = [
+        "Farmer",
+        "Consumer",
+        "Retailer",
+        "Admin",
+      ];
+
+      if (!allowedRoles.includes(role)) {
+        return res.status(400).json({
+          message: "Invalid role.",
+        });
+      }
+
+      const normalizedEmail =
+        email.trim().toLowerCase();
+
+      const existingUser =
+        await User.findOne({
+          email: normalizedEmail,
+        });
+
+      if (existingUser) {
+        return res.status(400).json({
+          message:
+            "An account with this email already exists.",
+        });
+      }
+
+      const hashedPassword =
+        await bcrypt.hash(password, 10);
+
+      const user = await User.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        password: hashedPassword,
+        location: location.trim(),
+        role,
+      });
+
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          role: user.role,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
       );
 
-    if (!passwordMatch) {
-      return res.status(401).json({
-        message: "Invalid email or password",
+      res.status(201).json({
+        message:
+          "Account created successfully.",
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          location: user.location,
+          role: user.role,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Signup error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Server error during signup.",
       });
     }
-
-    const token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        role: user.role,
-        name: user.name,
-        email: user.email,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-
-    res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        location: user.location,
-        role: user.role,
-        verificationStatus:
-          user.verificationStatus,
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-
-    res.status(500).json({
-      message: "Server error",
-    });
   }
-});
+);
 
-// ===============================
-// AUTH - CURRENT USER
-// ===============================
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+app.post(
+  "/api/auth/login",
+  async (req, res) => {
+    try {
+      const {
+        email,
+        password,
+      } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({
+          message:
+            "Email and password are required.",
+        });
+      }
+
+      const user =
+        await User.findOne({
+          email: email
+            .trim()
+            .toLowerCase(),
+        });
+
+      if (!user) {
+        return res.status(401).json({
+          message:
+            "Invalid email or password.",
+        });
+      }
+
+      const passwordMatch =
+        await bcrypt.compare(
+          password,
+          user.password
+        );
+
+      if (!passwordMatch) {
+        return res.status(401).json({
+          message:
+            "Invalid email or password.",
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          role: user.role,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      res.json({
+        message:
+          "Login successful.",
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          location: user.location,
+          role: user.role,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Login error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Server error during login.",
+      });
+    }
+  }
+);
+
+/* =========================================================
+   CURRENT USER
+   ========================================================= */
 
 app.get(
   "/api/auth/me",
   authenticateToken,
   async (req, res) => {
     try {
-      const user = await User.findById(
-        req.user.userId
-      ).select("-password");
+      const user =
+        await User.findById(
+          req.user.userId
+        ).select("-password");
 
       if (!user) {
         return res.status(404).json({
-          message: "User not found",
+          message: "User not found.",
         });
       }
 
       res.json(user);
     } catch (error) {
       console.error(
-        "Get current user error:",
+        "Get user error:",
         error
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to get user.",
       });
     }
   }
 );
 
-// ===============================
-// PRODUCE - ADD PRODUCE
-// ===============================
+/* =========================================================
+   ADD PRODUCE
+   FARMER ONLY
+   ========================================================= */
 
 app.post(
   "/api/produce",
@@ -285,7 +337,7 @@ app.post(
       if (req.user.role !== "Farmer") {
         return res.status(403).json({
           message:
-            "Only farmers can add produce",
+            "Only farmers can add produce.",
         });
       }
 
@@ -310,111 +362,125 @@ app.post(
       ) {
         return res.status(400).json({
           message:
-            "Name, quantity, price, location and harvest date are required",
+            "Please provide all required produce details.",
         });
       }
 
       const numericQuantity =
         Number(quantity);
 
-      const numericPrice = Number(price);
+      const numericPrice =
+        Number(price);
 
       if (
-        !Number.isFinite(numericQuantity) ||
+        Number.isNaN(numericQuantity) ||
         numericQuantity < 0
       ) {
         return res.status(400).json({
-          message:
-            "Quantity must be a valid non-negative number",
+          message: "Invalid quantity.",
         });
       }
 
       if (
-        !Number.isFinite(numericPrice) ||
+        Number.isNaN(numericPrice) ||
         numericPrice < 0
       ) {
         return res.status(400).json({
-          message:
-            "Price must be a valid non-negative number",
+          message: "Invalid price.",
         });
       }
 
+      let numericLatitude = null;
+      let numericLongitude = null;
+
       if (
-        latitude !== null &&
         latitude !== undefined &&
+        latitude !== null &&
         latitude !== ""
       ) {
-        const numericLatitude =
+        numericLatitude =
           Number(latitude);
 
         if (
-          !Number.isFinite(numericLatitude) ||
+          Number.isNaN(
+            numericLatitude
+          ) ||
           numericLatitude < -90 ||
           numericLatitude > 90
         ) {
           return res.status(400).json({
-            message: "Invalid latitude",
+            message:
+              "Invalid latitude.",
           });
         }
       }
 
       if (
-        longitude !== null &&
         longitude !== undefined &&
+        longitude !== null &&
         longitude !== ""
       ) {
-        const numericLongitude =
+        numericLongitude =
           Number(longitude);
 
         if (
-          !Number.isFinite(numericLongitude) ||
+          Number.isNaN(
+            numericLongitude
+          ) ||
           numericLongitude < -180 ||
           numericLongitude > 180
         ) {
           return res.status(400).json({
-            message: "Invalid longitude",
+            message:
+              "Invalid longitude.",
           });
         }
       }
 
-      const produce = await Produce.create({
-        farmerId: req.user.userId,
+      const produce =
+        await Produce.create({
+          farmerId:
+            req.user.userId,
 
-        name: name.trim(),
+          name: name.trim(),
 
-        quantity: numericQuantity,
+          quantity:
+            numericQuantity,
 
-        price: numericPrice,
+          price:
+            numericPrice,
 
-        location: location.trim(),
+          location:
+            location.trim(),
 
-        latitude:
-          latitude === "" ||
-          latitude === undefined ||
-          latitude === null
-            ? null
-            : Number(latitude),
+          latitude:
+            numericLatitude,
 
-        longitude:
-          longitude === "" ||
-          longitude === undefined ||
-          longitude === null
-            ? null
-            : Number(longitude),
+          longitude:
+            numericLongitude,
 
-        harvestDate,
+          harvestDate,
 
-        farmingMethod:
-          farmingMethod || "",
+          farmingMethod:
+            farmingMethod || "",
 
-        pesticide:
-          pesticide || "",
-      });
+          pesticide:
+            pesticide || "",
+        });
+
+      const populatedProduce =
+        await Produce.findById(
+          produce._id
+        ).populate(
+          "farmerId",
+          "name email location role"
+        );
 
       res.status(201).json({
         message:
-          "Produce added successfully",
-        produce,
+          "Produce added successfully.",
+        produce:
+          populatedProduce,
       });
     } catch (error) {
       console.error(
@@ -423,15 +489,17 @@ app.post(
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to add produce.",
       });
     }
   }
 );
 
-// ===============================
-// PRODUCE - GET ALL
-// ===============================
+/* =========================================================
+   GET ALL PRODUCE
+   PUBLIC
+   ========================================================= */
 
 app.get(
   "/api/produce",
@@ -441,9 +509,11 @@ app.get(
         await Produce.find()
           .populate(
             "farmerId",
-            "name email location verificationStatus"
+            "name email location role"
           )
-          .sort({ createdAt: -1 });
+          .sort({
+            createdAt: -1,
+          });
 
       res.json(produce);
     } catch (error) {
@@ -453,15 +523,16 @@ app.get(
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to fetch produce.",
       });
     }
   }
 );
 
-// ===============================
-// PRODUCE - FARMER'S PRODUCE
-// ===============================
+/* =========================================================
+   GET FARMER'S PRODUCE
+   ========================================================= */
 
 app.get(
   "/api/produce/my",
@@ -471,32 +542,43 @@ app.get(
       if (req.user.role !== "Farmer") {
         return res.status(403).json({
           message:
-            "Only farmers can access this route",
+            "Only farmers can access this page.",
         });
       }
 
       const produce =
         await Produce.find({
-          farmerId: req.user.userId,
-        }).sort({ createdAt: -1 });
+          farmerId:
+            req.user.userId,
+        })
+          .populate(
+            "farmerId",
+            "name email location role"
+          )
+          .sort({
+            createdAt: -1,
+          });
 
       res.json(produce);
     } catch (error) {
       console.error(
-        "Get farmer produce error:",
+        "Get my produce error:",
         error
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to fetch your produce.",
       });
     }
   }
 );
 
-// ===============================
-// ORDERS - CREATE ORDER
-// ===============================
+/* =========================================================
+   CREATE ORDER
+   CONSUMER / RETAILER
+   COD + ONLINE
+   ========================================================= */
 
 app.post(
   "/api/orders",
@@ -509,19 +591,27 @@ app.post(
       ) {
         return res.status(403).json({
           message:
-            "Only consumers and retailers can place orders",
+            "Only consumers and retailers can place orders.",
         });
       }
 
       const {
         produceId,
         quantity,
+        buyerName,
+        buyerLocation,
+        paymentMethod = "COD",
       } = req.body;
 
-      if (!produceId || !quantity) {
+      if (
+        !produceId ||
+        !quantity ||
+        !buyerName ||
+        !buyerLocation
+      ) {
         return res.status(400).json({
           message:
-            "Produce and quantity are required",
+            "Please provide all order details.",
         });
       }
 
@@ -532,20 +622,34 @@ app.post(
         !Number.isFinite(
           requestedQuantity
         ) ||
-        requestedQuantity <= 0
+        requestedQuantity < 1
       ) {
         return res.status(400).json({
           message:
-            "Quantity must be greater than 0",
+            "Order quantity must be at least 1 kg.",
+        });
+      }
+
+      if (
+        !["COD", "ONLINE"].includes(
+          paymentMethod
+        )
+      ) {
+        return res.status(400).json({
+          message:
+            "Invalid payment method.",
         });
       }
 
       const produce =
-        await Produce.findById(produceId);
+        await Produce.findById(
+          produceId
+        );
 
       if (!produce) {
         return res.status(404).json({
-          message: "Produce not found",
+          message:
+            "Produce not found.",
         });
       }
 
@@ -555,18 +659,7 @@ app.post(
       ) {
         return res.status(400).json({
           message:
-            "Not enough quantity available",
-        });
-      }
-
-      const buyer =
-        await User.findById(
-          req.user.userId
-        );
-
-      if (!buyer) {
-        return res.status(404).json({
-          message: "Buyer not found",
+            "Not enough produce available.",
         });
       }
 
@@ -574,30 +667,239 @@ app.post(
         requestedQuantity *
         produce.price;
 
-      const order =
-        await Order.create({
-          produceId: produce._id,
-          produceName: produce.name,
-          farmerId: produce.farmerId,
-          buyerId: buyer._id,
-          buyerType: buyer.role,
-          quantity: requestedQuantity,
-          pricePerKg: produce.price,
-          totalPrice,
-          buyerName: buyer.name,
-          buyerLocation: buyer.location,
-          status: "Pending",
+      /* =====================================================
+         ONLINE PAYMENT
+         ===================================================== */
+
+      if (paymentMethod === "ONLINE") {
+        if (!razorpay) {
+          return res.status(500).json({
+            message:
+              "Online payment is not configured on the server yet.",
+          });
+        }
+
+        const amountInPaise =
+          Math.round(
+            totalPrice * 100
+          );
+
+        const receipt =
+          `FC_${Date.now()}`.slice(
+            0,
+            40
+          );
+
+        const razorpayOrder =
+          await razorpay.orders.create({
+            amount:
+              amountInPaise,
+
+            currency: "INR",
+
+            receipt,
+
+            notes: {
+              produceId:
+                String(
+                  produce._id
+                ),
+
+              buyerId:
+                String(
+                  req.user.userId
+                ),
+            },
+          });
+
+        /*
+          IMPORTANT:
+          Online order stores the real Razorpay ID.
+          Produce quantity is NOT reduced yet.
+          It is reduced only after payment verification.
+        */
+
+        const order =
+          await Order.create({
+            produceId:
+              produce._id,
+
+            produceName:
+              produce.name,
+
+            farmerId:
+              produce.farmerId,
+
+            buyerId:
+              req.user.userId,
+
+            buyerType:
+              req.user.role,
+
+            quantity:
+              requestedQuantity,
+
+            pricePerKg:
+              produce.price,
+
+            totalPrice,
+
+            buyerName:
+              buyerName.trim(),
+
+            buyerLocation:
+              buyerLocation.trim(),
+
+            paymentMethod:
+              "ONLINE",
+
+            paymentStatus:
+              "Pending",
+
+            razorpayOrderId:
+              razorpayOrder.id,
+
+            status:
+              "Pending",
+          });
+
+        const populatedOrder =
+          await Order.findById(
+            order._id
+          )
+            .populate(
+              "farmerId",
+              "name email location"
+            )
+            .populate(
+              "buyerId",
+              "name email location role"
+            )
+            .populate(
+              "produceId"
+            );
+
+        return res.status(201).json({
+          message:
+            "Razorpay order created",
+
+          order:
+            populatedOrder,
+
+          razorpayOrder: {
+            id:
+              razorpayOrder.id,
+
+            amount:
+              razorpayOrder.amount,
+
+            currency:
+              razorpayOrder.currency,
+          },
+
+          razorpayKey:
+            process.env
+              .RAZORPAY_KEY_ID,
         });
+      }
+
+      /* =====================================================
+         CASH ON DELIVERY
+         ===================================================== */
+
+      /*
+        IMPORTANT FIX:
+
+        DO NOT write:
+
+       
+
+        COD orders do not have a Razorpay order ID.
+      */
+
+      const codOrderData = {
+  produceId:
+    produce._id,
+
+  produceName:
+    produce.name,
+
+  farmerId:
+    produce.farmerId,
+
+  buyerId:
+    req.user.userId,
+
+  buyerType:
+    req.user.role,
+
+  quantity:
+    requestedQuantity,
+
+  pricePerKg:
+    produce.price,
+
+  totalPrice,
+
+  buyerName:
+    buyerName.trim(),
+
+  buyerLocation:
+    buyerLocation.trim(),
+
+  paymentMethod:
+    "COD",
+
+  paymentStatus:
+    "Pending",
+
+  status:
+    "Pending",
+};
+
+/*
+  IMPORTANT:
+  COD orders must never contain a Razorpay order ID.
+  Explicitly remove it if anything accidentally adds it.
+*/
+delete codOrderData.razorpayOrderId;
+
+const order =
+  await Order.create(
+    codOrderData
+  );
+      /*
+        COD order is placed immediately,
+        so reduce available quantity.
+      */
 
       produce.quantity -=
         requestedQuantity;
 
       await produce.save();
 
-      res.status(201).json({
+      const populatedOrder =
+        await Order.findById(
+          order._id
+        )
+          .populate(
+            "farmerId",
+            "name email location"
+          )
+          .populate(
+            "buyerId",
+            "name email location role"
+          )
+          .populate(
+            "produceId"
+          );
+
+      return res.status(201).json({
         message:
-          "Order placed successfully",
-        order,
+          "Order placed successfully.",
+
+        order:
+          populatedOrder,
       });
     } catch (error) {
       console.error(
@@ -606,62 +908,19 @@ app.post(
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to create order.",
       });
     }
   }
 );
 
-// ===============================
-// ORDERS - FARMER ORDERS
-// ===============================
+/* =========================================================
+   RAZORPAY PAYMENT VERIFICATION
+   ========================================================= */
 
-app.get(
-  "/api/orders",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      if (req.user.role !== "Farmer") {
-        return res.status(403).json({
-          message:
-            "Only farmers can access this route",
-        });
-      }
-
-      const orders =
-        await Order.find({
-          farmerId: req.user.userId,
-        })
-          .populate(
-            "buyerId",
-            "name email location role"
-          )
-          .populate(
-            "produceId",
-            "name price quantity"
-          )
-          .sort({ createdAt: -1 });
-
-      res.json(orders);
-    } catch (error) {
-      console.error(
-        "Get farmer orders error:",
-        error
-      );
-
-      res.status(500).json({
-        message: "Server error",
-      });
-    }
-  }
-);
-
-// ===============================
-// ORDERS - BUYER ORDERS
-// ===============================
-
-app.get(
-  "/api/orders/my",
+app.post(
+  "/api/payments/verify",
   authenticateToken,
   async (req, res) => {
     try {
@@ -671,23 +930,314 @@ app.get(
       ) {
         return res.status(403).json({
           message:
-            "Only consumers and retailers can access this route",
+            "Only consumers and retailers can verify payments.",
+        });
+      }
+
+      if (!razorpay) {
+        return res.status(500).json({
+          message:
+            "Online payment is not configured.",
+        });
+      }
+
+      const {
+        produceId,
+        quantity,
+        buyerName,
+        buyerLocation,
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
+      } = req.body;
+
+      if (
+        !produceId ||
+        !quantity ||
+        !buyerName ||
+        !buyerLocation ||
+        !razorpayOrderId ||
+        !razorpayPaymentId ||
+        !razorpaySignature
+      ) {
+        return res.status(400).json({
+          message:
+            "Payment verification details are incomplete.",
+        });
+      }
+
+      const generatedSignature =
+        crypto
+          .createHmac(
+            "sha256",
+            process.env
+              .RAZORPAY_KEY_SECRET
+          )
+          .update(
+            `${razorpayOrderId}|${razorpayPaymentId}`
+          )
+          .digest("hex");
+
+      if (
+        generatedSignature.length !==
+        razorpaySignature.length ||
+        !crypto.timingSafeEqual(
+          Buffer.from(
+            generatedSignature
+          ),
+          Buffer.from(
+            razorpaySignature
+          )
+        )
+      ) {
+        return res.status(400).json({
+          message:
+            "Payment verification failed.",
+        });
+      }
+
+      const razorpayOrder =
+        await razorpay.orders.fetch(
+          razorpayOrderId
+        );
+
+      const requestedQuantity =
+        Number(quantity);
+
+      if (
+        !Number.isFinite(
+          requestedQuantity
+        ) ||
+        requestedQuantity < 1
+      ) {
+        return res.status(400).json({
+          message:
+            "Invalid quantity.",
+        });
+      }
+
+      const produce =
+        await Produce.findById(
+          produceId
+        );
+
+      if (!produce) {
+        return res.status(404).json({
+          message:
+            "Produce not found.",
+        });
+      }
+
+      const totalPrice =
+        requestedQuantity *
+        produce.price;
+
+      const expectedAmount =
+        Math.round(
+          totalPrice * 100
+        );
+
+      if (
+        razorpayOrder.amount !==
+          expectedAmount ||
+        razorpayOrder.currency !==
+          "INR"
+      ) {
+        return res.status(400).json({
+          message:
+            "Payment amount does not match the order.",
+        });
+      }
+
+      if (
+        produce.quantity <
+        requestedQuantity
+      ) {
+        return res.status(400).json({
+          message:
+            "Not enough produce available.",
+        });
+      }
+
+      /* Prevent duplicate payment verification */
+
+      const existingOrder =
+        await Order.findOne({
+          razorpayOrderId,
+        });
+
+      if (existingOrder) {
+        return res.json({
+          message:
+            "Payment already verified and order exists.",
+
+          order:
+            existingOrder,
+        });
+      }
+
+      const order =
+        await Order.create({
+          produceId:
+            produce._id,
+
+          produceName:
+            produce.name,
+
+          farmerId:
+            produce.farmerId,
+
+          buyerId:
+            req.user.userId,
+
+          buyerType:
+            req.user.role,
+
+          quantity:
+            requestedQuantity,
+
+          pricePerKg:
+            produce.price,
+
+          totalPrice,
+
+          buyerName:
+            buyerName.trim(),
+
+          buyerLocation:
+            buyerLocation.trim(),
+
+          paymentMethod:
+            "ONLINE",
+
+          paymentStatus:
+            "Paid",
+
+          razorpayOrderId,
+
+          razorpayPaymentId,
+
+          razorpaySignature,
+
+          status:
+            "Pending",
+        });
+
+      /* Reduce quantity only after successful payment */
+
+      produce.quantity -=
+        requestedQuantity;
+
+      await produce.save();
+
+      const populatedOrder =
+        await Order.findById(
+          order._id
+        )
+          .populate(
+            "farmerId",
+            "name email location"
+          )
+          .populate(
+            "buyerId",
+            "name email location role"
+          )
+          .populate(
+            "produceId"
+          );
+
+      res.status(201).json({
+        message:
+          "Payment verified and order created successfully.",
+
+        order:
+          populatedOrder,
+      });
+    } catch (error) {
+      console.error(
+        "Verify Razorpay payment error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Unable to verify payment.",
+      });
+    }
+  }
+);
+
+/* =========================================================
+   FARMER ORDERS
+   ========================================================= */
+
+app.get(
+  "/api/orders",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message:
+            "Only farmers can access orders.",
         });
       }
 
       const orders =
         await Order.find({
-          buyerId: req.user.userId,
+          farmerId:
+            req.user.userId,
         })
           .populate(
-            "produceId",
-            "name price location"
+            "buyerId",
+            "name email location role"
+          )
+          .populate(
+            "produceId"
+          )
+          .sort({
+            createdAt: -1,
+          });
+
+      res.json(orders);
+    } catch (error) {
+      console.error(
+        "Get farmer orders error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Unable to fetch farmer orders.",
+      });
+    }
+  }
+);
+
+/* =========================================================
+   BUYER ORDERS
+   ========================================================= */
+
+app.get(
+  "/api/orders/my",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const orders =
+        await Order.find({
+          buyerId:
+            req.user.userId,
+        })
+          .populate(
+            "produceId"
           )
           .populate(
             "farmerId",
-            "name location"
+            "name email location"
           )
-          .sort({ createdAt: -1 });
+          .sort({
+            createdAt: -1,
+          });
 
       res.json(orders);
     } catch (error) {
@@ -697,15 +1247,16 @@ app.get(
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to fetch your orders.",
       });
     }
   }
 );
 
-// ===============================
-// ORDERS - FIND BY BUYER NAME
-// ===============================
+/* =========================================================
+   LEGACY BUYER NAME SEARCH
+   ========================================================= */
 
 app.get(
   "/api/orders/buyer/:buyerName",
@@ -716,34 +1267,29 @@ app.get(
         await Order.find({
           buyerName:
             req.params.buyerName,
-        })
-          .populate(
-            "produceId",
-            "name price location"
-          )
-          .populate(
-            "farmerId",
-            "name location"
-          )
-          .sort({ createdAt: -1 });
+        }).sort({
+          createdAt: -1,
+        });
 
       res.json(orders);
     } catch (error) {
       console.error(
-        "Get orders by buyer name error:",
+        "Buyer name search error:",
         error
       );
 
       res.status(500).json({
-        message: "Server error",
+        message:
+          "Unable to find orders.",
       });
     }
   }
 );
 
-// ===============================
-// ORDERS - UPDATE STATUS
-// ===============================
+/* =========================================================
+   UPDATE ORDER STATUS
+   FARMER ONLY
+   ========================================================= */
 
 app.patch(
   "/api/orders/:id/status",
@@ -753,11 +1299,13 @@ app.patch(
       if (req.user.role !== "Farmer") {
         return res.status(403).json({
           message:
-            "Only farmers can update order status",
+            "Only farmers can update order status.",
         });
       }
 
-      const { status } = req.body;
+      const {
+        status,
+      } = req.body;
 
       const allowedStatuses = [
         "Pending",
@@ -769,11 +1317,13 @@ app.patch(
       ];
 
       if (
-        !allowedStatuses.includes(status)
+        !allowedStatuses.includes(
+          status
+        )
       ) {
         return res.status(400).json({
           message:
-            "Invalid order status",
+            "Invalid order status.",
         });
       }
 
@@ -784,28 +1334,63 @@ app.patch(
 
       if (!order) {
         return res.status(404).json({
-          message: "Order not found",
+          message:
+            "Order not found.",
         });
       }
 
       if (
+        !order.farmerId ||
         order.farmerId.toString() !==
-        req.user.userId
+          req.user.userId.toString()
       ) {
         return res.status(403).json({
           message:
-            "You can only update your own orders",
+            "You can only update your own orders.",
         });
       }
 
-      order.status = status;
+      order.status =
+        status;
+
+      /*
+        COD is considered paid when
+        the farmer marks the order Delivered.
+      */
+
+      if (
+        order.paymentMethod ===
+          "COD" &&
+        status === "Delivered"
+      ) {
+        order.paymentStatus =
+          "Paid";
+      }
 
       await order.save();
 
+      const updatedOrder =
+        await Order.findById(
+          order._id
+        )
+          .populate(
+            "buyerId",
+            "name email location role"
+          )
+          .populate(
+            "produceId"
+          )
+          .populate(
+            "farmerId",
+            "name email location"
+          );
+
       res.json({
         message:
-          "Order status updated successfully",
-        order,
+          "Order status updated successfully.",
+
+        order:
+          updatedOrder,
       });
     } catch (error) {
       console.error(
@@ -814,188 +1399,53 @@ app.patch(
       );
 
       res.status(500).json({
-        message: "Server error",
-      });
-    }
-  }
-);
-
-// ===============================
-// ADMIN - GET ALL USERS
-// ===============================
-
-app.get(
-  "/api/admin/users",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      if (req.user.role !== "Admin") {
-        return res.status(403).json({
-          message: "Admin access required",
-        });
-      }
-
-      const users =
-        await User.find()
-          .select("-password")
-          .sort({ createdAt: -1 });
-
-      res.json(users);
-    } catch (error) {
-      console.error(
-        "Get admin users error:",
-        error
-      );
-
-      res.status(500).json({
-        message: "Server error",
-      });
-    }
-  }
-);
-
-// ===============================
-// ADMIN - VERIFY USER
-// ===============================
-
-app.patch(
-  "/api/admin/users/:id/verify",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      if (req.user.role !== "Admin") {
-        return res.status(403).json({
-          message: "Admin access required",
-        });
-      }
-
-      const user =
-        await User.findById(
-          req.params.id
-        );
-
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
-      user.verificationStatus =
-        "Verified";
-
-      await user.save();
-
-      res.json({
         message:
-          "User verified successfully",
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          verificationStatus:
-            user.verificationStatus,
-        },
-      });
-    } catch (error) {
-      console.error(
-        "Verify user error:",
-        error
-      );
-
-      res.status(500).json({
-        message: "Server error",
+          "Unable to update order status.",
       });
     }
   }
 );
 
-// ===============================
-// ADMIN - REJECT USER
-// ===============================
+/* =========================================================
+   404 HANDLER
+   ========================================================= */
 
-app.patch(
-  "/api/admin/users/:id/reject",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      if (req.user.role !== "Admin") {
-        return res.status(403).json({
-          message: "Admin access required",
-        });
-      }
-
-      const user =
-        await User.findById(
-          req.params.id
-        );
-
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
-      user.verificationStatus =
-        "Rejected";
-
-      await user.save();
-
-      res.json({
-        message:
-          "User rejected successfully",
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          verificationStatus:
-            user.verificationStatus,
-        },
-      });
-    } catch (error) {
-      console.error(
-        "Reject user error:",
-        error
-      );
-
-      res.status(500).json({
-        message: "Server error",
-      });
-    }
+app.use(
+  (req, res) => {
+    res.status(404).json({
+      message:
+        "API route not found.",
+    });
   }
 );
 
-// ===============================
-// 404 HANDLER
-// ===============================
-
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Route not found",
-  });
-});
-
-// ===============================
-// MONGODB CONNECTION
-// ===============================
+/* =========================================================
+   MONGODB CONNECTION
+   ========================================================= */
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(
+    process.env.MONGO_URI
+  )
   .then(() => {
     console.log(
       "MongoDB connected successfully 🌱"
     );
 
-    app.listen(PORT, () => {
-      console.log(
-        `FarmConnect backend running on port ${PORT}`
-      );
-    });
-  })
-  .catch((error) => {
-    console.error(
-      "MongoDB connection failed:",
-      error
+    app.listen(
+      PORT,
+      () => {
+        console.log(
+          `FarmConnect backend running on port ${PORT}`
+        );
+      }
     );
-  });
+  })
+  .catch(
+    (error) => {
+      console.error(
+        "MongoDB connection error:",
+        error
+      );
+    }
+  );
