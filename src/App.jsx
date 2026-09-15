@@ -89,6 +89,400 @@ function DeliveryTracking({ status }) {
     </div>
   );
 }
+/* =========================================================
+   FARMCONNECT VOICE ASSISTANT
+========================================================= */
+
+function VoiceAssistant({ setPage }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [language, setLanguage] = useState("en-IN");
+  const [message, setMessage] = useState(
+    "Hello! How can I help you?"
+  );
+
+  function speak(text) {
+    if (!("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language;
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function handleCommand(command) {
+    const text = command.toLowerCase().trim();
+
+    /* HOME */
+    if (
+      text.includes("home") ||
+      text.includes("होम") ||
+      text.includes("मुख्य पृष्ठ")
+    ) {
+      setPage("home");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं आपको होम पेज पर ले जा रहा हूँ।"
+          : "Taking you to the home page.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* MARKETPLACE */
+    if (
+      text.includes("marketplace") ||
+      text.includes("market") ||
+      text.includes("products") ||
+      text.includes("vegetables") ||
+      text.includes("बाजार") ||
+      text.includes("मार्केट") ||
+      text.includes("सब्जी")
+    ) {
+      setPage("marketplace");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं आपके लिए मार्केटप्लेस खोल रहा हूँ।"
+          : "Opening the FarmConnect marketplace.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* FARMER */
+    if (
+      text.includes("farmer") ||
+      text.includes("sell") ||
+      text.includes("farmer dashboard") ||
+      text.includes("किसान") ||
+      text.includes("बेचना")
+    ) {
+      setPage("farmer");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं किसान डैशबोर्ड खोल रहा हूँ।"
+          : "Opening the farmer dashboard.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* RETAILER */
+    if (
+      text.includes("retailer") ||
+      text.includes("wholesale") ||
+      text.includes("रिटेलर") ||
+      text.includes("थोक")
+    ) {
+      setPage("retailer");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं रिटेलर पेज खोल रहा हूँ।"
+          : "Opening the retailer page.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* MY ORDERS */
+    if (
+      text.includes("my orders") ||
+      text.includes("orders") ||
+      text.includes("order") ||
+      text.includes("मेरे ऑर्डर") ||
+      text.includes("ऑर्डर")
+    ) {
+      setPage("myorders");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं आपके ऑर्डर खोल रहा हूँ।"
+          : "Opening your orders.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* LOGIN */
+    if (
+      text.includes("login") ||
+      text.includes("log in") ||
+      text.includes("sign in") ||
+      text.includes("लॉगिन")
+    ) {
+      setPage("auth");
+
+      const reply =
+        language === "hi-IN"
+          ? "मैं लॉगिन पेज खोल रहा हूँ।"
+          : "Opening the login page.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* HELP */
+    if (
+      text.includes("help") ||
+      text.includes("what can you do") ||
+      text.includes("मदद") ||
+      text.includes("क्या कर सकते")
+    ) {
+      const reply =
+        language === "hi-IN"
+          ? "आप मुझसे मार्केटप्लेस, ऑर्डर, किसान पेज, रिटेलर पेज या होम पेज खोलने के लिए कह सकते हैं।"
+          : "You can ask me to open the marketplace, your orders, farmer page, retailer page, login page, or home page.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    /* UNKNOWN COMMAND */
+    const reply =
+      language === "hi-IN"
+        ? "माफ़ कीजिए, मैं अभी यह कमांड नहीं समझ पाया। आप मदद बोलकर उपलब्ध कमांड सुन सकते हैं।"
+        : "Sorry, I didn't understand that. Say help to hear what I can do.";
+
+    setMessage(reply);
+    speak(reply);
+  }
+
+  function startListening() {
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      const reply =
+        "Voice recognition is not supported in this browser. Please use Google Chrome.";
+
+      setMessage(reply);
+      speak(reply);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = language;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+
+      setMessage(
+        language === "hi-IN"
+          ? "सुन रहा हूँ..."
+          : "Listening..."
+      );
+    };
+
+    recognition.onresult = (event) => {
+      const transcript =
+        event.results[0][0].transcript;
+
+      setMessage(`"${transcript}"`);
+      handleCommand(transcript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error(
+        "Voice recognition error:",
+        event.error
+      );
+
+      setIsListening(false);
+
+      let errorMessage =
+        "I couldn't hear you. Please try again.";
+
+      if (language === "hi-IN") {
+        errorMessage =
+          "मैं आपकी आवाज़ नहीं सुन पाया। कृपया फिर से कोशिश करें।";
+      }
+
+      setMessage(errorMessage);
+      speak(errorMessage);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  }
+
+  function changeLanguage() {
+    const nextLanguage =
+      language === "en-IN" ? "hi-IN" : "en-IN";
+
+    setLanguage(nextLanguage);
+
+    const reply =
+      nextLanguage === "hi-IN"
+        ? "अब मैं हिंदी में आपकी सहायता करूंगा।"
+        : "I will now assist you in English.";
+
+    setMessage(reply);
+    speak(reply);
+  }
+
+  return (
+    <>
+      {isOpen && (
+        <div className="voice-assistant-panel">
+          <div className="voice-assistant-header">
+            <div>
+              <span className="voice-small-label">
+                FARMCONNECT
+              </span>
+
+              <h3>Voice Assistant</h3>
+            </div>
+
+            <button
+              type="button"
+              className="voice-close-btn"
+              onClick={() => {
+                setIsOpen(false);
+                window.speechSynthesis?.cancel();
+              }}
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="voice-assistant-icon">
+            {isListening ? "🔴" : "🎙️"}
+          </div>
+
+          <p className="voice-status">
+            {message}
+          </p>
+
+          <button
+            type="button"
+            className={`voice-listen-btn ${
+              isListening ? "listening" : ""
+            }`}
+            onClick={startListening}
+          >
+            {isListening
+              ? "🔴 Listening..."
+              : "🎤 Tap to Speak"}
+          </button>
+
+          <button
+            type="button"
+            className="voice-language-btn"
+            onClick={changeLanguage}
+          >
+            🌐{" "}
+            {language === "en-IN"
+              ? "हिंदी में बोलें"
+              : "Speak in English"}
+          </button>
+
+          <div className="voice-examples">
+            <span>Try saying:</span>
+
+            {language === "en-IN" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("open marketplace")
+                  }
+                >
+                  "Open marketplace"
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("show my orders")
+                  }
+                >
+                  "Show my orders"
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("I want to sell"
+                    )
+                  }
+                >
+                  "I want to sell"
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("मार्केट खोलो")
+                  }
+                >
+                  "मार्केट खोलो"
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("मेरे ऑर्डर दिखाओ")
+                  }
+                >
+                  "मेरे ऑर्डर दिखाओ"
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCommand("मुझे बेचना है")
+                  }
+                >
+                  "मुझे बेचना है"
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <button
+        type="button"
+        className={`voice-floating-button ${
+          isListening ? "active" : ""
+        }`}
+        onClick={() => setIsOpen((previous) => !previous)}
+        aria-label="Open FarmConnect voice assistant"
+      >
+        {isListening ? "🔴" : "🎙️"}
+
+        <span className="voice-floating-label">
+          Voice
+        </span>
+      </button>
+    </>
+  );
+}
 
 /* =========================================================
    NAVBAR
@@ -2342,32 +2736,53 @@ function App() {
      ------------------------------------------------------- */
 
   function openOrderPage(item) {
-    if (!user) {
-      setMessage("Please login to place an order.");
-      setPage("auth");
-      return;
-    }
-
-    if (
-      user.role !== "Consumer" &&
-      user.role !== "Retailer"
-    ) {
-      setMessage(
-        "Only consumers and retailers can place orders."
-      );
-      return;
-    }
-
-    setSelectedProduce(item);
-    setBuyerType(user.role);
-    setOrderQuantity(1);
-    setBuyerName(user.name);
-    setBuyerLocation(user.location || "");
-    setPaymentMethod("COD");
-    setMessage("");
-    setPage("order");
+  // No product
+  if (!item) {
+    setMessage("This produce is no longer available.");
+    return;
   }
 
+  // Product was sold out while the page was open
+  const availableQuantity = Number(item.quantity);
+
+  if (!Number.isFinite(availableQuantity) || availableQuantity <= 0) {
+    setMessage(
+      "Sorry, this produce has just been sold out. 🌾"
+    );
+
+    // Refresh marketplace data
+    fetchProduce();
+
+    return;
+  }
+
+  // User must be logged in
+  if (!user) {
+    setMessage("Please login to place an order.");
+    setPage("auth");
+    return;
+  }
+
+  // Only buyers can order
+  if (
+    user.role !== "Consumer" &&
+    user.role !== "Retailer"
+  ) {
+    setMessage(
+      "Only consumers and retailers can place orders."
+    );
+    return;
+  }
+
+  // Everything is valid
+  setSelectedProduce(item);
+  setBuyerType(user.role);
+  setOrderQuantity(1);
+  setBuyerName(user.name);
+  setBuyerLocation(user.location || "");
+  setMessage("");
+  setPage("order");
+}
   /* -------------------------------------------------------
      PLACE ORDER
      ------------------------------------------------------- */
@@ -2402,6 +2817,23 @@ function App() {
     }
 
     const quantity = Number(orderQuantity);
+    const currentAvailableQuantity =
+  Number(selectedProduce.quantity);
+
+if (
+  !Number.isFinite(currentAvailableQuantity) ||
+  currentAvailableQuantity <= 0
+) {
+  setMessage(
+    "Sorry, this produce has just been sold out. 🌾"
+  );
+
+  setSelectedProduce(null);
+  await fetchProduce();
+  setPage("marketplace");
+
+  return;
+}
 
     if (!Number.isFinite(quantity) || quantity < 1) {
       setMessage("Order quantity must be at least 1 kg.");

@@ -872,11 +872,29 @@ const order =
         COD order is placed immediately,
         so reduce available quantity.
       */
+const updatedProduce = await Produce.findOneAndUpdate(
+  {
+    _id: produce._id,
+    quantity: {
+      $gte: requestedQuantity,
+    },
+  },
+  {
+    $inc: {
+      quantity: -requestedQuantity,
+    },
+  },
+  {
+    new: true,
+  }
+);
 
-      produce.quantity -=
-        requestedQuantity;
-
-      await produce.save();
+if (!updatedProduce) {
+  return res.status(400).json({
+    message:
+      "Sorry, this produce has just been sold out or there is not enough quantity available.",
+  });
+}
 
       const populatedOrder =
         await Order.findById(
@@ -1326,7 +1344,7 @@ app.patch(
             "Invalid order status.",
         });
       }
-
+      
       const order =
         await Order.findById(
           req.params.id
