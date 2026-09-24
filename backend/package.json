@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.5",
     "multer": "^2.4.0",
+    "openai": "^7.17.0",
     "razorpay": "^2.9.8",
     "twilio": "^6.1.1"
   },

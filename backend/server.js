@@ -5,6 +5,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const OpenAI = require("openai");
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
 
@@ -1423,47 +1429,136 @@ app.patch(
     }
   }
 );
+// ===============================
+// FARMCONNECT AI ASSISTANT
+// ===============================
+
+app.post("/api/ai/chat", async (req, res) => {
+  try {
+    const { message, language } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        message: "Please provide a question.",
+      });
+    }
+
+    const languageNames = {
+      "en-IN": "English",
+      "hi-IN": "Hindi",
+      "mr-IN": "Marathi",
+    };
+
+    const selectedLanguage =
+      languageNames[language] || "English";
+
+    const response = await openai.responses.create({
+      model: "gpt-5.6-luna",
+
+      instructions: `
+You are FarmConnect AI, an agricultural assistant
+designed especially for farmers in India.
+
+Answer the farmer in ${selectedLanguage}.
+
+Important rules:
+
+1. Use simple language that farmers can understand.
+2. Give practical and useful farming guidance.
+3. You can help with:
+   - Crops
+   - Soil
+   - Irrigation
+   - Fertilizers
+   - Pests
+   - Crop diseases
+   - Harvesting
+   - Storage
+   - Farming practices
+   - General agricultural questions
+
+4. Do not invent live market prices.
+5. Do not invent current weather information.
+6. Do not invent government schemes or current eligibility details.
+7. If the farmer asks for live information, clearly explain
+   that current data needs to be checked from an appropriate
+   live source.
+8. Never claim that you personally inspected the farmer's crop.
+9. For serious crop disease or pesticide decisions,
+   recommend consulting a local agricultural expert.
+10. Keep answers reasonably concise.
+11. Always respond in ${selectedLanguage}.
+      `,
+
+          input: message.trim(),
+  });
+
+  const answer = response.output_text;
+
+  res.json({
+    answer,
+    language: selectedLanguage,
+  });
+
+} catch (error) {
+
+  console.error(
+    "================ FARMCONNECT AI ERROR ================"
+  );
+
+  console.error(
+    "Message:",
+    error?.message
+  );
+
+  console.error(
+    "Status:",
+    error?.status || error?.response?.status
+  );
+
+  console.error(
+    "Details:",
+    error?.response?.data || error
+  );
+
+  console.error(
+    "======================================================="
+  );
+
+  res.status(500).json({
+    message:
+      "AI assistant is temporarily unavailable.",
+  });
+}
+});
 
 /* =========================================================
    404 HANDLER
    ========================================================= */
 
-app.use(
-  (req, res) => {
-    res.status(404).json({
-      message:
-        "API route not found.",
-    });
-  }
-);
-
+app.use((req, res) => {
+  res.status(404).json({
+    message: "API route not found.",
+  });
+});
 /* =========================================================
    MONGODB CONNECTION
    ========================================================= */
 
 mongoose
-  .connect(
-    process.env.MONGO_URI
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log(
-      "MongoDB connected successfully 🌱"
-    );
+    console.log("MongoDB connected successfully 🌱");
 
-    app.listen(
-      PORT,
-      () => {
-        console.log(
-          `FarmConnect backend running on port ${PORT}`
-        );
-      }
-    );
-  })
-  .catch(
-    (error) => {
-      console.error(
-        "MongoDB connection error:",
-        error
+    app.listen(PORT, () => {
+      console.log(
+        `FarmConnect backend running on port ${PORT}`
       );
-    }
-  );
+    });
+  })
+  .catch((error) => {
+    console.error(
+      "MongoDB connection error:",
+      error
+    );
+  });
