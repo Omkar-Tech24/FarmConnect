@@ -13,12 +13,27 @@ const openai = new OpenAI({
 
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
 
 const Produce = require("./models/Produce");
+const BulkRequirement = require("./models/BulkRequirement");
+const BulkOffer = require("./models/BulkOffer");
 const Order = require("./models/Order");
 const User = require("./models/User");
 
 const app = express();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const PORT = process.env.PORT || 5000;
 
@@ -338,6 +353,7 @@ app.get(
 app.post(
   "/api/produce",
   authenticateToken,
+  upload.single("image"),
   async (req, res) => {
     try {
       if (req.user.role !== "Farmer") {
@@ -347,17 +363,41 @@ app.post(
         });
       }
 
-      const {
-        name,
-        quantity,
-        price,
-        location,
-        latitude,
-        longitude,
-        harvestDate,
-        farmingMethod,
-        pesticide,
-      } = req.body;
+     const body = req.body || {};
+
+const name = body.name;
+const quantity = body.quantity;
+const price = body.price;
+const location = body.location;
+const latitude = body.latitude;
+const longitude = body.longitude;
+const harvestDate = body.harvestDate;
+const farmingMethod = body.farmingMethod;
+const pesticide = body.pesticide;
+      
+      let imageUrl = "";
+
+if (req.file) {
+  const uploadResult = await new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "farmconnect/crops",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+
+    stream.end(req.file.buffer);
+  });
+
+  imageUrl = uploadResult.secure_url;
+}
 
       if (
         !name ||
@@ -470,8 +510,12 @@ app.post(
           farmingMethod:
             farmingMethod || "",
 
-          pesticide:
-            pesticide || "",
+         pesticide:
+  pesticide || "",
+
+imageUrl:
+  imageUrl,
+            
         });
 
       const populatedProduce =
@@ -1541,6 +1585,244 @@ app.use((req, res) => {
     message: "API route not found.",
   });
 });
+// =========================================================
+// BULK REQUIREMENTS
+// =========================================================
+
+// Retailer creates a bulk requirement
+app.post(
+  "/api/bulk-requirements",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Retailer") {
+        return res.status(403).json({
+          message: "Only retailers can create bulk requirements.",
+        });
+      }
+
+      const {
+  produceName,
+  quantity,
+  expectedPrice,
+  deliveryLocation,
+  deliveryLatitude,
+  deliveryLongitude,
+  requiredBy,
+  requirements,
+} = req.body;
+
+      if (
+        !produceName ||
+        !quantity ||
+        !expectedPrice ||
+        !deliveryLocation ||
+        !requiredBy
+      ) {
+        return res.status(400).json({
+          message: "Please fill all required fields.",
+        });
+      }
+
+      const bulkRequirement = await BulkRequirement.create({
+  retailerId: req.user.id,
+  produceName,
+  quantity: Number(quantity),
+  expectedPrice: Number(expectedPrice),
+  deliveryLocation,
+
+  deliveryLatitude:
+    deliveryLatitude === "" ||
+    deliveryLatitude === undefined
+      ? null
+      : Number(deliveryLatitude),
+
+  deliveryLongitude:
+    deliveryLongitude === "" ||
+    deliveryLongitude === undefined
+      ? null
+      : Number(deliveryLongitude),
+
+  requiredBy,
+  requirements: requirements || "",
+});
+
+      res.status(201).json({
+        message: "Bulk requirement posted successfully.",
+        requirement: bulkRequirement,
+      });
+    } catch (error) {
+      console.error("Create bulk requirement error:", error);
+
+      res.status(500).json({
+        message: "Failed to create bulk requirement.",
+      });
+    }
+  }
+);
+// Farmer submits an offer for a bulk requirement
+app.post(
+  "/api/bulk-requirements/:requirementId/offers",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message: "Only farmers can submit offers.",
+        });
+      }
+
+      const { requirementId } = req.params;
+
+      const {
+        offeredQuantity,
+        offeredPrice,
+        message,
+      } = req.body;
+
+      if (!offeredQuantity || !offeredPrice) {
+        return res.status(400).json({
+          message: "Please provide quantity and price.",
+        });
+      }
+
+      const requirement =
+        await BulkRequirement.findById(requirementId);
+
+      if (!requirement) {
+        return res.status(404).json({
+          message: "Bulk requirement not found.",
+        });
+      }
+
+      if (requirement.status === "Closed") {
+        return res.status(400).json({
+          message: "This requirement is closed.",
+        });
+      }
+
+      if (requirement.status === "Fulfilled") {
+        return res.status(400).json({
+          message: "This requirement is already fulfilled.",
+        });
+      }
+
+      if (Number(offeredQuantity) > requirement.quantity) {
+        return res.status(400).json({
+          message: `Maximum quantity allowed is ${requirement.quantity} kg.`,
+        });
+      }
+
+      const offer = await BulkOffer.create({
+        requirementId,
+        farmerId: req.user.id,
+        offeredQuantity: Number(offeredQuantity),
+        offeredPrice: Number(offeredPrice),
+        message: message || "",
+      });
+
+      res.status(201).json({
+        message: "Offer submitted successfully.",
+        offer,
+      });
+    } catch (error) {
+      console.error("Submit bulk offer error:", error);
+
+      res.status(500).json({
+        message: "Failed to submit offer.",
+      });
+    }
+  }
+);
+// Retailer views their own bulk requirements
+app.get(
+  "/api/bulk-requirements/my",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Retailer") {
+        return res.status(403).json({
+          message: "Only retailers can view their bulk requirements.",
+        });
+      }
+
+      const requirements = await BulkRequirement.find({
+        retailerId: req.user.id,
+      })
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({
+        requirements,
+      });
+    } catch (error) {
+      console.error(
+        "Get retailer bulk requirements error:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Failed to fetch your bulk requirements.",
+      });
+    }
+  }
+);
+// Retailer views offers for one of their bulk requirements
+app.get(
+  "/api/bulk-requirements/:requirementId/offers",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Retailer") {
+        return res.status(403).json({
+          message: "Only retailers can view bulk offers.",
+        });
+      }
+
+      const { requirementId } = req.params;
+
+      const requirement =
+        await BulkRequirement.findById(requirementId);
+
+      if (!requirement) {
+        return res.status(404).json({
+          message: "Bulk requirement not found.",
+        });
+      }
+
+      if (
+        requirement.retailerId.toString() !==
+        req.user.id.toString()
+      ) {
+        return res.status(403).json({
+          message:
+            "You can only view offers for your own requirements.",
+        });
+      }
+
+      const offers = await BulkOffer.find({
+        requirementId,
+      })
+        .populate(
+          "farmerId",
+          "name email location role"
+        )
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({
+        offers,
+      });
+    } catch (error) {
+      console.error(
+        "Get bulk offers error:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Failed to fetch bulk offers.",
+      });
+    }
+  }
+);
 /* =========================================================
    MONGODB CONNECTION
    ========================================================= */

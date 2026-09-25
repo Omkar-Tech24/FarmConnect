@@ -3804,3 +3804,364 @@ textarea:focus-visible {
     padding: 13px;
   }
 }
+/* =========================================
+   FARMCONNECT AI VOICE ASSISTANT
+   ========================================= */
+
+.voice-floating-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 13px 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #1f7a3f;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.voice-floating-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.voice-floating-button.active {
+  background: #c62828;
+}
+
+.voice-floating-label {
+  font-size: 14px;
+}
+
+
+/* =========================================
+   VOICE ASSISTANT PANEL
+   ========================================= */
+
+.voice-assistant-panel {
+  position: fixed;
+
+  right: 24px;
+  bottom: 90px;
+
+  width: 350px;
+  max-width: calc(100vw - 32px);
+
+  z-index: 9998;
+
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 20px;
+
+  box-shadow:
+    0 15px 50px rgba(0, 0, 0, 0.2);
+
+  border: 1px solid #dce8df;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.voice-assistant-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 15px;
+}
+
+.voice-small-label {
+  display: block;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  color: #2e7d32;
+
+  margin-bottom: 4px;
+}
+
+.voice-assistant-header h3 {
+  margin: 0;
+
+  font-size: 21px;
+
+  color: #123b20;
+}
+
+.voice-close-btn {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #f1f5f2;
+
+  color: #333;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-close-btn:hover {
+  background: #e2ebe4;
+}
+
+
+/* =========================================
+   MICROPHONE ICON
+   ========================================= */
+
+.voice-assistant-icon {
+  width: 70px;
+  height: 70px;
+
+  margin: 10px auto 16px;
+
+  border-radius: 50%;
+
+  background: #eaf6ed;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 34px;
+}
+
+
+/* =========================================
+   STATUS / AI ANSWER
+   ========================================= */
+
+.voice-status {
+  min-height: 55px;
+
+  margin: 0 0 16px;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: #f5f8f5;
+
+  color: #24452d;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+
+/* =========================================
+   LISTEN BUTTON
+   ========================================= */
+
+.voice-listen-btn {
+  width: 100%;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #2e7d32;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  margin-bottom: 10px;
+}
+
+.voice-listen-btn:hover {
+  background: #256b2a;
+}
+
+.voice-listen-btn.listening {
+  background: #c62828;
+}
+
+.voice-listen-btn:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   LANGUAGE BUTTON
+   ========================================= */
+
+.voice-language-btn {
+  width: 100%;
+
+  padding: 11px;
+
+  border: 1px solid #2e7d32;
+
+  border-radius: 12px;
+
+  background: white;
+
+  color: #2e7d32;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  margin-bottom: 5px;
+}
+
+.voice-language-btn:hover {
+  background: #f0f8f2;
+}
+
+.voice-language-btn:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   EXAMPLES
+   ========================================= */
+
+.voice-examples {
+  margin-top: 15px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.voice-examples > span {
+  font-size: 12px;
+
+  color: #666;
+
+  font-weight: 600;
+
+  margin-bottom: 2px;
+}
+
+.voice-examples button {
+  width: 100%;
+
+  padding: 9px 10px;
+
+  border: 1px solid #d9e5dc;
+
+  border-radius: 9px;
+
+  background: #fafcfb;
+
+  color: #315b3c;
+
+  font-size: 12px;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.voice-examples button:hover {
+  background: #eef7f0;
+
+  border-color: #9ac5a2;
+}
+
+
+/* =========================================
+   THINKING ANIMATION
+   ========================================= */
+
+.voice-assistant-icon {
+  transition: transform 0.3s ease;
+}
+
+.voice-floating-button:active {
+  transform: scale(0.96);
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+  .voice-assistant-panel {
+    right: 12px;
+    bottom: 82px;
+
+    width: calc(100vw - 24px);
+
+    padding: 16px;
+  }
+
+  .voice-floating-button {
+    right: 14px;
+    bottom: 14px;
+
+    padding: 12px 15px;
+  }
+
+  .voice-floating-label {
+    font-size: 13px;
+  }
+}
+.produce-marketplace-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 15px;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "https://farmconnect-hawh.onrender.com";
+const API_URL = "http://localhost:5000";
 
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
   const toRadians = (value) => (value * Math.PI) / 180;
@@ -89,17 +89,30 @@ function DeliveryTracking({ status }) {
     </div>
   );
 }
-/* =========================================================
-   FARMCONNECT VOICE ASSISTANT
-========================================================= */
-
 function VoiceAssistant({ setPage }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
   const [language, setLanguage] = useState("en-IN");
+  const languages = [
+  { code: "en-IN", name: "English", flag: "🇬🇧" },
+  { code: "hi-IN", name: "हिन्दी", flag: "🇮🇳" },
+  { code: "mr-IN", name: "मराठी", flag: "🇮🇳" },
+  { code: "gu-IN", name: "ગુજરાતી", flag: "🇮🇳" },
+  { code: "pa-IN", name: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
+  { code: "bn-IN", name: "বাংলা", flag: "🇮🇳" },
+  { code: "ta-IN", name: "தமிழ்", flag: "🇮🇳" },
+  { code: "te-IN", name: "తెలుగు", flag: "🇮🇳" },
+  { code: "kn-IN", name: "ಕನ್ನಡ", flag: "🇮🇳" },
+  { code: "ml-IN", name: "മലയാളം", flag: "🇮🇳" },
+];
   const [message, setMessage] = useState(
     "Hello! How can I help you?"
   );
+
+  // =========================================
+  // SPEAK TEXT
+  // =========================================
 
   function speak(text) {
     if (!("speechSynthesis" in window)) return;
@@ -107,6 +120,7 @@ function VoiceAssistant({ setPage }) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
+
     utterance.lang = language;
     utterance.rate = 0.9;
     utterance.pitch = 1;
@@ -114,28 +128,141 @@ function VoiceAssistant({ setPage }) {
     window.speechSynthesis.speak(utterance);
   }
 
-  function handleCommand(command) {
+  // =========================================
+  // LANGUAGE NAME
+  // =========================================
+
+  function getLanguageName() {
+    if (language === "hi-IN") return "Hindi";
+    if (language === "mr-IN") return "Marathi";
+
+    return "English";
+  }
+
+  // =========================================
+  // AI ASSISTANT
+  // =========================================
+
+  async function askFarmConnectAI(question) {
+    try {
+      setIsThinking(true);
+
+      const thinkingMessage =
+        language === "hi-IN"
+          ? "सोच रहा हूँ..."
+          : language === "mr-IN"
+          ? "विचार करत आहे..."
+          : "Thinking...";
+
+      setMessage(thinkingMessage);
+
+      /*
+       * During local development:
+       * http://localhost:5000
+       *
+       * On deployed website:
+       * https://farmconnect-hawh.onrender.com
+       */
+
+      const AI_API_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000"
+          : API_URL;
+
+      const response = await fetch(
+        `${AI_API_URL}/api/ai/chat`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            message: question,
+            language: language,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "AI request failed"
+        );
+      }
+
+      const answer =
+        data.answer ||
+        "Sorry, I could not generate an answer.";
+
+      setMessage(answer);
+
+      speak(answer);
+
+    } catch (error) {
+      console.error(
+        "FarmConnect AI error:",
+        error
+      );
+
+      const errorMessage =
+        language === "hi-IN"
+          ? "माफ़ कीजिए, अभी AI सेवा उपलब्ध नहीं है। कृपया थोड़ी देर बाद फिर कोशिश करें।"
+          : language === "mr-IN"
+          ? "माफ करा, सध्या AI सेवा उपलब्ध नाही. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा."
+          : "Sorry, the AI assistant is currently unavailable. Please try again later.";
+
+      setMessage(errorMessage);
+
+      speak(errorMessage);
+
+    } finally {
+      setIsThinking(false);
+    }
+  }
+
+  // =========================================
+  // HANDLE COMMAND
+  // =========================================
+
+  async function handleCommand(command) {
     const text = command.toLowerCase().trim();
 
-    /* HOME */
+    if (!text) return;
+
+    // =========================================
+    // HOME
+    // =========================================
+
     if (
       text.includes("home") ||
       text.includes("होम") ||
-      text.includes("मुख्य पृष्ठ")
+      text.includes("मुख्य पृष्ठ") ||
+      text.includes("मुख्यपृष्ठ") ||
+      text.includes("घर")
     ) {
       setPage("home");
 
       const reply =
         language === "hi-IN"
           ? "मैं आपको होम पेज पर ले जा रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी तुम्हाला होम पेजवर घेऊन जात आहे."
           : "Taking you to the home page.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* MARKETPLACE */
+    // =========================================
+    // MARKETPLACE
+    // =========================================
+
     if (
       text.includes("marketplace") ||
       text.includes("market") ||
@@ -143,140 +270,195 @@ function VoiceAssistant({ setPage }) {
       text.includes("vegetables") ||
       text.includes("बाजार") ||
       text.includes("मार्केट") ||
-      text.includes("सब्जी")
+      text.includes("सब्जी") ||
+      text.includes("भाजी") ||
+      text.includes("उत्पादने")
     ) {
       setPage("marketplace");
 
       const reply =
         language === "hi-IN"
           ? "मैं आपके लिए मार्केटप्लेस खोल रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी तुमच्यासाठी मार्केटप्लेस उघडत आहे."
           : "Opening the FarmConnect marketplace.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* FARMER */
+    // =========================================
+    // FARMER
+    // =========================================
+
     if (
       text.includes("farmer") ||
       text.includes("sell") ||
       text.includes("farmer dashboard") ||
       text.includes("किसान") ||
-      text.includes("बेचना")
+      text.includes("बेचना") ||
+      text.includes("शेतकरी") ||
+      text.includes("विकायचे") ||
+      text.includes("विकायचं")
     ) {
       setPage("farmer");
 
       const reply =
         language === "hi-IN"
           ? "मैं किसान डैशबोर्ड खोल रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी शेतकरी डॅशबोर्ड उघडत आहे."
           : "Opening the farmer dashboard.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* RETAILER */
+    // =========================================
+    // RETAILER
+    // =========================================
+
     if (
       text.includes("retailer") ||
       text.includes("wholesale") ||
       text.includes("रिटेलर") ||
-      text.includes("थोक")
+      text.includes("थोक") ||
+      text.includes("किरकोळ") ||
+      text.includes("घाऊक")
     ) {
       setPage("retailer");
 
       const reply =
         language === "hi-IN"
           ? "मैं रिटेलर पेज खोल रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी रिटेलर पेज उघडत आहे."
           : "Opening the retailer page.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* MY ORDERS */
+    // =========================================
+    // MY ORDERS
+    // =========================================
+
     if (
       text.includes("my orders") ||
       text.includes("orders") ||
       text.includes("order") ||
       text.includes("मेरे ऑर्डर") ||
-      text.includes("ऑर्डर")
+      text.includes("ऑर्डर") ||
+      text.includes("माझे ऑर्डर") ||
+      text.includes("ऑर्डर दाखवा")
     ) {
       setPage("myorders");
 
       const reply =
         language === "hi-IN"
           ? "मैं आपके ऑर्डर खोल रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी तुमचे ऑर्डर उघडत आहे."
           : "Opening your orders.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* LOGIN */
+    // =========================================
+    // LOGIN
+    // =========================================
+
     if (
       text.includes("login") ||
       text.includes("log in") ||
       text.includes("sign in") ||
-      text.includes("लॉगिन")
+      text.includes("लॉगिन") ||
+      text.includes("लॉग इन") ||
+      text.includes("लॉग इन करा")
     ) {
       setPage("auth");
 
       const reply =
         language === "hi-IN"
           ? "मैं लॉगिन पेज खोल रहा हूँ।"
+          : language === "mr-IN"
+          ? "मी लॉगिन पेज उघडत आहे."
           : "Opening the login page.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* HELP */
+    // =========================================
+    // HELP
+    // =========================================
+
     if (
       text.includes("help") ||
       text.includes("what can you do") ||
       text.includes("मदद") ||
-      text.includes("क्या कर सकते")
+      text.includes("क्या कर सकते") ||
+      text.includes("मदत") ||
+      text.includes("तुम्ही काय करू शकता")
     ) {
       const reply =
         language === "hi-IN"
-          ? "आप मुझसे मार्केटप्लेस, ऑर्डर, किसान पेज, रिटेलर पेज या होम पेज खोलने के लिए कह सकते हैं।"
-          : "You can ask me to open the marketplace, your orders, farmer page, retailer page, login page, or home page.";
+          ? "आप मुझसे खेती, फसल, मिट्टी, सिंचाई, कीट, फसल की बीमारी और खेती से जुड़े सवाल पूछ सकते हैं। आप मार्केटप्लेस, ऑर्डर, किसान पेज, रिटेलर पेज या होम पेज भी खोल सकते हैं।"
+          : language === "mr-IN"
+          ? "तुम्ही मला शेती, पिके, माती, सिंचन, कीड, पिकांचे रोग आणि शेतीशी संबंधित प्रश्न विचारू शकता. तुम्ही मार्केटप्लेस, ऑर्डर, शेतकरी पेज, रिटेलर पेज किंवा होम पेज देखील उघडू शकता."
+          : "You can ask me about crops, soil, irrigation, pests, crop diseases, harvesting and farming. You can also ask me to open the marketplace, your orders, farmer page, retailer page or home page.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    /* UNKNOWN COMMAND */
-    const reply =
-      language === "hi-IN"
-        ? "माफ़ कीजिए, मैं अभी यह कमांड नहीं समझ पाया। आप मदद बोलकर उपलब्ध कमांड सुन सकते हैं।"
-        : "Sorry, I didn't understand that. Say help to hear what I can do.";
+    // =========================================
+    // OTHERWISE → ASK AI
+    // =========================================
 
-    setMessage(reply);
-    speak(reply);
+    await askFarmConnectAI(command);
   }
 
+  // =========================================
+  // START LISTENING
+  // =========================================
+
   function startListening() {
+    if (isListening || isThinking) return;
+
     const SpeechRecognition =
       window.SpeechRecognition ||
       window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       const reply =
-        "Voice recognition is not supported in this browser. Please use Google Chrome.";
+        language === "hi-IN"
+          ? "इस ब्राउज़र में वॉइस रिकग्निशन उपलब्ध नहीं है। कृपया Google Chrome का उपयोग करें।"
+          : language === "mr-IN"
+          ? "या ब्राउझरमध्ये व्हॉइस रिकग्निशन उपलब्ध नाही. कृपया Google Chrome वापरा."
+          : "Voice recognition is not supported in this browser. Please use Google Chrome.";
 
       setMessage(reply);
       speak(reply);
+
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition =
+      new SpeechRecognition();
 
     recognition.lang = language;
     recognition.continuous = false;
@@ -286,11 +468,14 @@ function VoiceAssistant({ setPage }) {
     recognition.onstart = () => {
       setIsListening(true);
 
-      setMessage(
+      const listeningMessage =
         language === "hi-IN"
           ? "सुन रहा हूँ..."
-          : "Listening..."
-      );
+          : language === "mr-IN"
+          ? "ऐकत आहे..."
+          : "Listening...";
+
+      setMessage(listeningMessage);
     };
 
     recognition.onresult = (event) => {
@@ -298,6 +483,7 @@ function VoiceAssistant({ setPage }) {
         event.results[0][0].transcript;
 
       setMessage(`"${transcript}"`);
+
       handleCommand(transcript);
     };
 
@@ -317,6 +503,11 @@ function VoiceAssistant({ setPage }) {
           "मैं आपकी आवाज़ नहीं सुन पाया। कृपया फिर से कोशिश करें।";
       }
 
+      if (language === "mr-IN") {
+        errorMessage =
+          "मला तुमचा आवाज ऐकू आला नाही. कृपया पुन्हा प्रयत्न करा.";
+      }
+
       setMessage(errorMessage);
       speak(errorMessage);
     };
@@ -328,160 +519,363 @@ function VoiceAssistant({ setPage }) {
     recognition.start();
   }
 
-  function changeLanguage() {
-    const nextLanguage =
-      language === "en-IN" ? "hi-IN" : "en-IN";
+  function changeLanguage(event) {
+  const nextLanguage = event.target.value;
 
-    setLanguage(nextLanguage);
+  setLanguage(nextLanguage);
 
-    const reply =
-      nextLanguage === "hi-IN"
-        ? "अब मैं हिंदी में आपकी सहायता करूंगा।"
-        : "I will now assist you in English.";
+  const selectedLanguage = languages.find(
+    (lang) => lang.code === nextLanguage
+  );
 
-    setMessage(reply);
-    speak(reply);
+  const reply =
+    nextLanguage === "en-IN"
+      ? "I will now assist you in English."
+      : nextLanguage === "hi-IN"
+      ? "अब मैं हिंदी में आपकी सहायता करूंगा।"
+      : nextLanguage === "mr-IN"
+      ? "आता मी तुम्हाला मराठीत मदत करेन."
+      : nextLanguage === "gu-IN"
+      ? "હવે હું તમને ગુજરાતીમાં મદદ કરીશ."
+      : nextLanguage === "pa-IN"
+      ? "ਹੁਣ ਮੈਂ ਪੰਜਾਬੀ ਵਿੱਚ ਤੁਹਾਡੀ ਮਦਦ ਕਰਾਂਗਾ।"
+      : nextLanguage === "bn-IN"
+      ? "এখন আমি আপনাকে বাংলায় সাহায্য করব।"
+      : nextLanguage === "ta-IN"
+      ? "இப்போது நான் உங்களுக்கு தமிழில் உதவுவேன்."
+      : nextLanguage === "te-IN"
+      ? "ఇప్పుడు నేను మీకు తెలుగులో సహాయం చేస్తాను."
+      : nextLanguage === "kn-IN"
+      ? "ಈಗ ನಾನು ನಿಮಗೆ ಕನ್ನಡದಲ್ಲಿ ಸಹಾಯ ಮಾಡುತ್ತೇನೆ."
+      : nextLanguage === "ml-IN"
+      ? "ഇനി ഞാൻ നിങ്ങളെ മലയാളത്തിൽ സഹായിക്കും."
+      : `I will assist you in ${selectedLanguage?.name || "English"}.`;
+
+  setMessage(reply);
+  speak(reply);
+}
+
+  // =========================================
+  // LANGUAGE BUTTON TEXT
+  // =========================================
+
+  function getLanguageButtonText() {
+    if (language === "en-IN") {
+      return "हिंदी में बोलें";
+    }
+
+    if (language === "hi-IN") {
+      return "मराठीमध्ये बोला";
+    }
+
+    return "Speak in English";
   }
 
-  return (
-    <>
-      {isOpen && (
-        <div className="voice-assistant-panel">
-          <div className="voice-assistant-header">
-            <div>
-              <span className="voice-small-label">
-                FARMCONNECT
-              </span>
+  // =========================================
+  // RENDER
+  // =========================================
 
-              <h3>Voice Assistant</h3>
-            </div>
+ return (
+  <>
+    {isOpen && (
+      <div className="voice-assistant-panel">
 
-            <button
-              type="button"
-              className="voice-close-btn"
-              onClick={() => {
-                setIsOpen(false);
-                window.speechSynthesis?.cancel();
-              }}
-            >
-              ×
-            </button>
+        {/* HEADER */}
+        <div className="voice-assistant-header">
+          <div>
+            <span className="voice-small-label">
+              FARMCONNECT
+            </span>
+
+            <h3>AI Farming Assistant</h3>
           </div>
-
-          <div className="voice-assistant-icon">
-            {isListening ? "🔴" : "🎙️"}
-          </div>
-
-          <p className="voice-status">
-            {message}
-          </p>
 
           <button
             type="button"
-            className={`voice-listen-btn ${
-              isListening ? "listening" : ""
-            }`}
-            onClick={startListening}
+            className="voice-close-btn"
+            onClick={() => {
+              setIsOpen(false);
+              window.speechSynthesis?.cancel();
+            }}
           >
-            {isListening
-              ? "🔴 Listening..."
-              : "🎤 Tap to Speak"}
+            ×
           </button>
-
-          <button
-            type="button"
-            className="voice-language-btn"
-            onClick={changeLanguage}
-          >
-            🌐{" "}
-            {language === "en-IN"
-              ? "हिंदी में बोलें"
-              : "Speak in English"}
-          </button>
-
-          <div className="voice-examples">
-            <span>Try saying:</span>
-
-            {language === "en-IN" ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("open marketplace")
-                  }
-                >
-                  "Open marketplace"
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("show my orders")
-                  }
-                >
-                  "Show my orders"
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("I want to sell"
-                    )
-                  }
-                >
-                  "I want to sell"
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("मार्केट खोलो")
-                  }
-                >
-                  "मार्केट खोलो"
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("मेरे ऑर्डर दिखाओ")
-                  }
-                >
-                  "मेरे ऑर्डर दिखाओ"
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCommand("मुझे बेचना है")
-                  }
-                >
-                  "मुझे बेचना है"
-                </button>
-              </>
-            )}
-          </div>
         </div>
-      )}
 
-      <button
-        type="button"
-        className={`voice-floating-button ${
-          isListening ? "active" : ""
-        }`}
-        onClick={() => setIsOpen((previous) => !previous)}
-        aria-label="Open FarmConnect voice assistant"
-      >
-        {isListening ? "🔴" : "🎙️"}
+        {/* ICON */}
+        <div className="voice-assistant-icon">
+          {isListening
+            ? "🔴"
+            : isThinking
+            ? "🤖"
+            : "🌱"}
+        </div>
 
-        <span className="voice-floating-label">
-          Voice
-        </span>
-      </button>
-    </>
-  );
+        {/* AI MESSAGE */}
+        <p className="voice-status">
+          {message}
+        </p>
+
+        {/* TEXT INPUT */}
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginBottom: "10px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder={
+              language === "hi-IN"
+                ? "अपना सवाल लिखें..."
+                : language === "mr-IN"
+                ? "तुमचा प्रश्न लिहा..."
+                : "Type your farming question..."
+            }
+            id="farmconnect-ai-input"
+            disabled={isThinking || isListening}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                const input =
+                  event.currentTarget.value.trim();
+
+                if (!input) return;
+
+                event.currentTarget.value = "";
+
+                handleCommand(input);
+              }
+            }}
+            style={{
+              flex: 1,
+              padding: "12px",
+              border: "1px solid #d9e5dc",
+              borderRadius: "10px",
+              outline: "none",
+              fontSize: "14px",
+            }}
+          />
+
+          <button
+            type="button"
+            disabled={isThinking || isListening}
+            onClick={() => {
+              const input =
+                document.getElementById(
+                  "farmconnect-ai-input"
+                );
+
+              if (!input) return;
+
+              const question =
+                input.value.trim();
+
+              if (!question) return;
+
+              input.value = "";
+
+              handleCommand(question);
+            }}
+            style={{
+              padding: "10px 14px",
+              border: "none",
+              borderRadius: "10px",
+              background: "#2e7d32",
+              color: "white",
+              fontWeight: "700",
+              cursor: "pointer",
+            }}
+          >
+            ➤
+          </button>
+        </div>
+
+        {/* VOICE BUTTON */}
+        <button
+          type="button"
+          className={`voice-listen-btn ${
+            isListening ? "listening" : ""
+          }`}
+          onClick={startListening}
+          disabled={isListening || isThinking}
+        >
+          {isListening
+            ? "🔴 Listening..."
+            : isThinking
+            ? "🤖 Thinking..."
+            : "🎤 Tap to Speak"}
+        </button>
+
+       {/* LANGUAGE SELECTOR */}
+<select
+  className="voice-language-btn"
+  value={language}
+  onChange={changeLanguage}
+  disabled={isListening || isThinking}
+  aria-label="Select language"
+>
+  {languages.map((lang) => (
+    <option key={lang.code} value={lang.code}>
+      {lang.flag} {lang.name}
+    </option>
+  ))}
+</select>
+
+        {/* LANGUAGE */}
+        <div
+          style={{
+            marginTop: "8px",
+            fontSize: "12px",
+            opacity: 0.7,
+            textAlign: "center",
+          }}
+        >
+          Language: {getLanguageName()}
+        </div>
+
+        {/* EXAMPLES */}
+        <div className="voice-examples">
+
+          <span>Try asking:</span>
+
+          {language === "en-IN" ? (
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "What fertilizer is good for tomato?"
+                  )
+                }
+              >
+                "What fertilizer is good for tomato?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "How often should I water my crops?"
+                  )
+                }
+              >
+                "How often should I water my crops?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "How can I control pests naturally?"
+                  )
+                }
+              >
+                "How can I control pests naturally?"
+              </button>
+            </>
+          ) : language === "hi-IN" ? (
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "टमाटर के लिए कौन सा खाद अच्छा है?"
+                  )
+                }
+              >
+                "टमाटर के लिए कौन सा खाद अच्छा है?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "फसल में कितनी बार पानी देना चाहिए?"
+                  )
+                }
+              >
+                "फसल में कितनी बार पानी देना चाहिए?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "कीटों को प्राकृतिक तरीके से कैसे नियंत्रित करें?"
+                  )
+                }
+              >
+                "कीटों को प्राकृतिक तरीके से कैसे नियंत्रित करें?"
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "टोमॅटोसाठी कोणते खत चांगले आहे?"
+                  )
+                }
+              >
+                "टोमॅटोसाठी कोणते खत चांगले आहे?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "पिकांना किती वेळा पाणी द्यावे?"
+                  )
+                }
+              >
+                "पिकांना किती वेळा पाणी द्यावे?"
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCommand(
+                    "किडींवर नैसर्गिक पद्धतीने नियंत्रण कसे करावे?"
+                  )
+                }
+              >
+                "किडींवर नैसर्गिक पद्धतीने नियंत्रण कसे करावे?"
+              </button>
+            </>
+          )}
+
+        </div>
+
+      </div>
+    )}
+
+    {/* FLOATING BUTTON */}
+    <button
+      type="button"
+      className={`voice-floating-button ${
+        isListening ? "active" : ""
+      }`}
+      onClick={() =>
+        setIsOpen(
+          (previous) => !previous
+        )
+      }
+      aria-label="Open FarmConnect AI assistant"
+    >
+      {isListening
+        ? "🔴"
+        : isThinking
+        ? "🤖"
+        : "🎙️"}
+
+      <span className="voice-floating-label">
+        AI Assistant
+      </span>
+    </button>
+  </>
+);
 }
 
 /* =========================================================
@@ -1115,6 +1509,13 @@ function FarmerPage({
   myProduce,
   orders,
   updateOrderStatus,
+  bulkRequirements,
+  bulkLoading,
+  selectedBulkRequirement,
+  setSelectedBulkRequirement,
+  bulkOfferForm,
+  setBulkOfferForm,
+  bulkOfferLoading,
 }) {
   if (!user || user.role !== "Farmer") {
     return (
@@ -1133,6 +1534,65 @@ function FarmerPage({
       [field]: value,
     }));
   }
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+  const toRadians = (degrees) => {
+    return degrees * (Math.PI / 180);
+  };
+
+  const R = 6371; // Earth radius in km
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c =
+    2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+const filteredBulkRequirements = bulkRequirements.filter(
+  (requirement) => {
+    // If user selected "Any distance", show everything
+    if (bulkDistance === "any") {
+      return true;
+    }
+
+    // If farmer location is not available,
+    // don't filter anything yet
+    if (
+      farmerLocation.latitude === null ||
+      farmerLocation.longitude === null
+    ) {
+      return true;
+    }
+
+    // If retailer did not provide coordinates,
+    // we cannot calculate distance
+    if (
+      requirement.deliveryLatitude === null ||
+      requirement.deliveryLatitude === undefined ||
+      requirement.deliveryLongitude === null ||
+      requirement.deliveryLongitude === undefined
+    ) {
+      return false;
+    }
+
+    const distance = calculateDistance(
+      farmerLocation.latitude,
+      farmerLocation.longitude,
+      requirement.deliveryLatitude,
+      requirement.deliveryLongitude
+    );
+
+    return distance <= Number(bulkDistance);
+  }
+);
 
   return (
     <div className="page-container">
@@ -1162,6 +1622,26 @@ function FarmerPage({
               placeholder="e.g. Tomato"
               required
             />
+            {/* CROP PHOTO */}
+<label htmlFor="crop-photo">Crop Photo</label>
+
+<input
+  id="crop-photo"
+  type="file"
+  accept="image/*"
+  onChange={(event) =>
+    updateProduceField("image", event.target.files[0])
+  }
+/>
+
+{produceForm.image && (
+  <div className="image-preview">
+    <img
+      src={URL.createObjectURL(produceForm.image)}
+      alt="Crop preview"
+    />
+  </div>
+)}
 
             <label htmlFor="produce-quantity">Quantity (kg)</label>
             <input
@@ -1322,7 +1802,344 @@ function FarmerPage({
             </div>
           )}
         </div>
-      </div>
+            </div>
+
+      {/* =====================================================
+          BULK REQUIREMENTS FROM RETAILERS
+          ===================================================== */}
+
+      <section className="orders-section">
+        <div className="section-heading">
+         <span className="section-label">BULK MARKETPLACE</span>
+
+<h2>Bulk Requirements from Retailers</h2>
+
+<p>
+  Find bulk produce requirements from retailers
+  near your location.
+</p>
+
+<div className="bulk-filter-bar">
+  <button
+    className="secondary-btn location-btn"
+    type="button"
+    onClick={() => {
+      if (!navigator.geolocation) {
+        alert(
+          "Geolocation is not supported by this browser."
+        );
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFarmerLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+
+          alert(
+            "Your location has been captured successfully."
+          );
+        },
+        () => {
+          alert(
+            "Please allow location access in your browser."
+          );
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000,
+        }
+      );
+    }}
+  >
+    📍 Use My Location
+  </button>
+</div>
+        </div>
+
+        {bulkLoading ? (
+          <div className="empty-state">
+            <h3>Loading bulk requirements...</h3>
+          </div>
+        ) : bulkRequirements.length === 0 ? (
+          <div className="empty-state">
+            <h3>No bulk requirements available</h3>
+            <p>
+              New retailer requirements will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="orders-grid">
+           {filteredBulkRequirements.map((requirement) => (
+              <div
+                className="order-card"
+                key={requirement._id}
+              >
+                <div className="order-card-header">
+                  <h3>{requirement.produceName}</h3>
+
+                  <span className="available-pill">
+                    {requirement.status}
+                  </span>
+                </div>
+
+                <p>
+                  <strong>Required Quantity:</strong>{" "}
+                  {requirement.quantity} kg
+                </p>
+
+                <p>
+                  <strong>Expected Price:</strong>{" "}
+                  ₹{requirement.expectedPrice}/kg
+                </p>
+
+                <p>
+                  <strong>Delivery Location:</strong>{" "}
+                  {requirement.deliveryLocation}
+                </p>
+                {farmerLocation.latitude !== null &&
+  farmerLocation.longitude !== null &&
+  requirement.deliveryLatitude !== null &&
+  requirement.deliveryLatitude !== undefined &&
+  requirement.deliveryLongitude !== null &&
+  requirement.deliveryLongitude !== undefined && (
+    <p>
+      <strong>Distance:</strong>{" "}
+      {calculateDistance(
+        farmerLocation.latitude,
+        farmerLocation.longitude,
+        requirement.deliveryLatitude,
+        requirement.deliveryLongitude
+      ).toFixed(1)}{" "}
+      km away
+    </p>
+  )}
+
+                <p>
+                  <strong>Required By:</strong>{" "}
+                  {new Date(
+                    requirement.requiredBy
+                  ).toLocaleDateString("en-IN")}
+                </p>
+
+                {requirement.requirements && (
+                  <p>
+                    <strong>Requirements:</strong>{" "}
+                    {requirement.requirements}
+                  </p>
+                )}
+
+                {requirement.retailerId && (
+                  <p>
+                    <strong>Retailer:</strong>{" "}
+                    {requirement.retailerId.name}
+                  </p>
+                )}
+
+                <button
+  className="primary-btn"
+  type="button"
+  onClick={() => {
+    setSelectedBulkRequirement(requirement);
+
+    setBulkOfferForm({
+      offeredQuantity: "",
+      offeredPrice: "",
+      message: "",
+    });
+  }}
+>
+  Make an Offer
+</button>
+              </div>
+            ))}
+                   </div>
+        )}
+
+        {/* =====================================================
+            BULK OFFER FORM
+            ===================================================== */}
+
+        {selectedBulkRequirement && (
+          <div className="dashboard-card">
+            <h2>
+              Make an Offer for{" "}
+              {selectedBulkRequirement.produceName}
+            </h2>
+
+            <p>
+              Retailer needs{" "}
+              <strong>
+                {selectedBulkRequirement.quantity} kg
+              </strong>
+              {" "}and expects around{" "}
+              <strong>
+                ₹{selectedBulkRequirement.expectedPrice}/kg
+              </strong>
+              .
+            </p>
+
+            <form
+              className="produce-form"
+              onSubmit={async (event) => {
+                event.preventDefault();
+
+                if (!selectedBulkRequirement) {
+                  return;
+                }
+
+                try {
+                  setBulkOfferForm((previous) => ({
+                    ...previous,
+                  }));
+
+                  const response = await fetch(
+                    `${API_URL}/api/bulk-requirements/${selectedBulkRequirement._id}/offers`,
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({
+                        offeredQuantity: Number(
+                          bulkOfferForm.offeredQuantity
+                        ),
+                        offeredPrice: Number(
+                          bulkOfferForm.offeredPrice
+                        ),
+                        message: bulkOfferForm.message,
+                      }),
+                    }
+                  );
+
+                  const data = await response.json();
+
+                  if (!response.ok) {
+                    throw new Error(
+                      data.message ||
+                        "Failed to submit offer."
+                    );
+                  }
+
+                  alert(
+                    "Offer submitted successfully!"
+                  );
+
+                  setSelectedBulkRequirement(null);
+
+                  setBulkOfferForm({
+                    offeredQuantity: "",
+                    offeredPrice: "",
+                    message: "",
+                  });
+                } catch (error) {
+                  console.error(
+                    "Submit bulk offer error:",
+                    error
+                  );
+
+                  alert(
+                    error.message ||
+                      "Failed to submit offer."
+                  );
+                }
+              }}
+            >
+              <label htmlFor="bulk-offer-quantity">
+                Your Available Quantity (kg)
+              </label>
+
+              <input
+                id="bulk-offer-quantity"
+                type="number"
+                min="1"
+                max={selectedBulkRequirement.quantity}
+                value={bulkOfferForm.offeredQuantity}
+                onChange={(event) =>
+                  setBulkOfferForm((previous) => ({
+                    ...previous,
+                    offeredQuantity:
+                      event.target.value,
+                  }))
+                }
+                placeholder="e.g. 30"
+                required
+              />
+
+              <label htmlFor="bulk-offer-price">
+                Your Price per kg (₹)
+              </label>
+
+              <input
+                id="bulk-offer-price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={bulkOfferForm.offeredPrice}
+                onChange={(event) =>
+                  setBulkOfferForm((previous) => ({
+                    ...previous,
+                    offeredPrice:
+                      event.target.value,
+                  }))
+                }
+                placeholder="e.g. 28"
+                required
+              />
+
+              <label htmlFor="bulk-offer-message">
+                Message to Retailer
+              </label>
+
+              <textarea
+                id="bulk-offer-message"
+                value={bulkOfferForm.message}
+                onChange={(event) =>
+                  setBulkOfferForm((previous) => ({
+                    ...previous,
+                    message: event.target.value,
+                  }))
+                }
+                placeholder="e.g. I can supply fresh tomatoes."
+                rows="4"
+              />
+
+              <div className="order-actions">
+                <button
+                  className="primary-btn"
+                  type="submit"
+                  disabled={bulkOfferLoading}
+                >
+                  {bulkOfferLoading
+                    ? "Submitting..."
+                    : "Submit Offer"}
+                </button>
+
+                <button
+                  className="secondary-btn"
+                  type="button"
+                  onClick={() => {
+                    setSelectedBulkRequirement(null);
+
+                    setBulkOfferForm({
+                      offeredQuantity: "",
+                      offeredPrice: "",
+                      message: "",
+                    });
+                  }}
+                  disabled={bulkOfferLoading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </section>
 
       <section className="orders-section">
         <div className="section-heading">
@@ -1330,7 +2147,6 @@ function FarmerPage({
           <h2>Incoming Orders</h2>
           <p>Accept, reject and update delivery status.</p>
         </div>
-
         {orders.length === 0 ? (
           <div className="empty-state">
             <h3>No orders yet</h3>
@@ -1729,14 +2545,20 @@ function MarketplacePage({
       ) : (
         <div className="marketplace-grid">
           {filteredProduce.map((item) => (
-            <div className="produce-card" key={item._id}>
-              <div className="produce-card-top">
-                <div className="produce-card-icon">🌾</div>
-                <span className="available-pill">
-                  {item.quantity} kg available
-                </span>
-              </div>
+           <div className="produce-card" key={item._id}>
+  {item.imageUrl && (
+    <img
+      src={item.imageUrl}
+      alt={item.name}
+      className="produce-marketplace-image"
+    />
+  )}
 
+  <div className="produce-card-top">
+    <span className="available-pill">
+      {item.quantity} kg available
+    </span>
+  </div>
               <h2>{item.name}</h2>
 
               <p className="produce-price">
@@ -1926,7 +2748,22 @@ function RetailerPage({
   openOrderPage,
   openFarmerProfile,
   setPage,
+  token,
 }) {
+  const [bulkForm, setBulkForm] = useState({
+  produceName: "",
+  quantity: "",
+  expectedPrice: "",
+  deliveryLocation: "",
+  deliveryLatitude: "",
+  deliveryLongitude: "",
+  requiredBy: "",
+  requirements: "",
+});
+
+  const [bulkSubmitting, setBulkSubmitting] = useState(false);
+  const [bulkMessage, setBulkMessage] = useState("");
+
   if (!user || user.role !== "Retailer") {
     return (
       <div className="page-container">
@@ -1938,24 +2775,309 @@ function RetailerPage({
     );
   }
 
+  function updateBulkField(field, value) {
+    setBulkForm((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
+  }
+
+  async function handlePostBulkRequirement(event) {
+    event.preventDefault();
+
+    if (!token) {
+      setBulkMessage("Please login again.");
+      return;
+    }
+
+    try {
+      setBulkSubmitting(true);
+      setBulkMessage("");
+
+      const response = await fetch(
+        `${API_URL}/api/bulk-requirements`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+         body: JSON.stringify({
+  produceName: bulkForm.produceName,
+  quantity: Number(bulkForm.quantity),
+  expectedPrice: Number(bulkForm.expectedPrice),
+  deliveryLocation: bulkForm.deliveryLocation,
+
+  deliveryLatitude:
+    bulkForm.deliveryLatitude === ""
+      ? null
+      : Number(bulkForm.deliveryLatitude),
+
+  deliveryLongitude:
+    bulkForm.deliveryLongitude === ""
+      ? null
+      : Number(bulkForm.deliveryLongitude),
+
+  requiredBy: bulkForm.requiredBy,
+  requirements: bulkForm.requirements,
+}),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to post bulk requirement."
+        );
+      }
+
+      setBulkMessage(
+        "Bulk requirement posted successfully! Farmers can now see it."
+      );
+
+      setBulkForm({
+  produceName: "",
+  quantity: "",
+  expectedPrice: "",
+  deliveryLocation: "",
+  deliveryLatitude: "",
+  deliveryLongitude: "",
+  requiredBy: "",
+  requirements: "",
+});
+    } catch (error) {
+      console.error(
+        "Post bulk requirement error:",
+        error
+      );
+
+      setBulkMessage(
+        error.message ||
+          "Failed to post bulk requirement."
+      );
+    } finally {
+      setBulkSubmitting(false);
+    }
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
-        <span className="section-label">RETAILER PORTAL</span>
+        <span className="section-label">
+          RETAILER PORTAL
+        </span>
+
         <h1>Retailer Portal 🏪</h1>
+
         <p>
-          Purchase agricultural produce in bulk directly from
-          farmers.
+          Purchase agricultural produce in bulk directly
+          from farmers.
         </p>
       </div>
 
-      <div className="info-banner">
-        <strong>Retailer Account</strong>
-        <p>
-          You can purchase produce from farmers using the
-          marketplace.
-        </p>
-      </div>
+      {message && (
+        <div className="message">
+          {message}
+        </div>
+      )}
+
+      {/* =====================================================
+    POST BULK REQUIREMENT
+    ===================================================== */}
+
+<section className="orders-section">
+  <div className="section-heading">
+    <span className="section-label">
+      BULK MARKETPLACE
+    </span>
+
+    <h2>Post a Bulk Requirement</h2>
+
+    <p>
+      Tell farmers what quantity of produce you need.
+      Farmers can then send you offers.
+    </p>
+  </div>
+
+  {bulkMessage && (
+    <div className="message">
+      {bulkMessage}
+    </div>
+  )}
+
+  <div className="dashboard-card">
+    <form
+      className="produce-form"
+      onSubmit={handlePostBulkRequirement}
+    >
+      <label htmlFor="bulk-produce-name">
+        Produce Name
+      </label>
+
+      <input
+        id="bulk-produce-name"
+        value={bulkForm.produceName}
+        onChange={(event) =>
+          updateBulkField(
+            "produceName",
+            event.target.value
+          )
+        }
+        placeholder="e.g. Tomato"
+        required
+      />
+
+      <label htmlFor="bulk-quantity">
+        Quantity Required (kg)
+      </label>
+
+      <input
+        id="bulk-quantity"
+        type="number"
+        min="1"
+        value={bulkForm.quantity}
+        onChange={(event) =>
+          updateBulkField(
+            "quantity",
+            event.target.value
+          )
+        }
+        placeholder="e.g. 70"
+        required
+      />
+
+      <label htmlFor="bulk-price">
+        Expected Price per kg (₹)
+      </label>
+
+      <input
+        id="bulk-price"
+        type="number"
+        min="0"
+        step="0.01"
+        value={bulkForm.expectedPrice}
+        onChange={(event) =>
+          updateBulkField(
+            "expectedPrice",
+            event.target.value
+          )
+        }
+        placeholder="e.g. 30"
+        required
+      />
+
+      <label htmlFor="bulk-location">
+        Delivery Location
+      </label>
+
+      <input
+        id="bulk-location"
+        value={bulkForm.deliveryLocation}
+        onChange={(event) =>
+          updateBulkField(
+            "deliveryLocation",
+            event.target.value
+          )
+        }
+        placeholder="e.g. Pune"
+        required
+      />
+
+      <button
+        className="secondary-btn location-btn"
+        type="button"
+        onClick={() => {
+          if (!navigator.geolocation) {
+            alert(
+              "Geolocation is not supported by this browser."
+            );
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              updateBulkField(
+                "deliveryLatitude",
+                position.coords.latitude.toFixed(6)
+              );
+
+              updateBulkField(
+                "deliveryLongitude",
+                position.coords.longitude.toFixed(6)
+              );
+
+              alert(
+                "Delivery location coordinates captured successfully."
+              );
+            },
+            () => {
+              alert(
+                "Please allow location access in your browser."
+              );
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 300000,
+            }
+          );
+        }}
+      >
+        📍 Use My Delivery Location
+      </button>
+
+      <label htmlFor="bulk-required-by">
+        Required By
+      </label>
+
+      <input
+        id="bulk-required-by"
+        type="date"
+        value={bulkForm.requiredBy}
+        onChange={(event) =>
+          updateBulkField(
+            "requiredBy",
+            event.target.value
+          )
+        }
+        required
+      />
+
+      <label htmlFor="bulk-requirements">
+        Additional Requirements
+      </label>
+
+      <textarea
+        id="bulk-requirements"
+        value={bulkForm.requirements}
+        onChange={(event) =>
+          updateBulkField(
+            "requirements",
+            event.target.value
+          )
+        }
+        placeholder="e.g. Fresh tomatoes, good quality, no damaged produce"
+        rows="4"
+      />
+
+      <button
+        className="primary-btn"
+        type="submit"
+        disabled={bulkSubmitting}
+      >
+        {bulkSubmitting
+          ? "Posting..."
+          : "Post Bulk Requirement"}
+      </button>
+    </form>
+  </div>
+</section>
+
+      {/* =====================================================
+          NORMAL MARKETPLACE
+          ===================================================== */}
 
       <MarketplacePage
         produce={produce}
@@ -2339,6 +3461,27 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [bulkRequirements, setBulkRequirements] = useState([]);
+const [bulkLoading, setBulkLoading] = useState(false);
+const [selectedBulkRequirement, setSelectedBulkRequirement] =
+  useState(null);
+
+const [bulkOfferForm, setBulkOfferForm] = useState({
+  offeredQuantity: "",
+  offeredPrice: "",
+  message: "",
+});
+
+const [bulkOfferLoading, setBulkOfferLoading] =
+  useState(false);
+  const [farmerLocation, setFarmerLocation] = useState({
+  latitude: null,
+  longitude: null,
+});
+
+const [bulkDistance, setBulkDistance] = useState("50");
+const [bulkLocationFilter, setBulkLocationFilter] =
+  useState("");
 
   const [authForm, setAuthForm] = useState({
     name: "",
@@ -2348,7 +3491,8 @@ function App() {
     role: "Consumer",
   });
 
-  const [produceForm, setProduceForm] = useState({
+ const [produceForm, setProduceForm] =
+  useState({
     name: "",
     quantity: "",
     price: "",
@@ -2356,8 +3500,7 @@ function App() {
     harvestDate: "",
     farmingMethod: "",
     pesticide: "",
-    latitude: "",
-    longitude: "",
+    image: null,
   });
 
   /* -------------------------------------------------------
@@ -2463,6 +3606,39 @@ function App() {
       console.error("Fetch my orders error:", error);
     }
   }
+  async function fetchBulkRequirements() {
+    if (!token || !user || user.role !== "Farmer") {
+      return;
+    }
+
+    try {
+      setBulkLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/api/bulk-requirements`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBulkRequirements(data.requirements || []);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Fetch bulk requirements error:",
+        error
+      );
+    } finally {
+      setBulkLoading(false);
+    }
+  }
 
   useEffect(() => {
     fetchProduce();
@@ -2479,9 +3655,10 @@ function App() {
     }
 
     if (user.role === "Farmer") {
-      fetchOrders();
-      fetchMyProduce();
-    }
+  fetchOrders();
+  fetchMyProduce();
+  fetchBulkRequirements();
+}
   }, [token, user]);
 
   /* -------------------------------------------------------
@@ -2660,28 +3837,45 @@ function App() {
     setLoading(true);
     setMessage("");
 
-    try {
-      const response = await fetch(
-        `${API_URL}/api/produce`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            name: produceForm.name,
-            quantity: Number(produceForm.quantity),
-            price: Number(produceForm.price),
-            location: produceForm.location,
-            harvestDate: produceForm.harvestDate,
-            farmingMethod: produceForm.farmingMethod,
-            pesticide: produceForm.pesticide,
-            latitude: produceForm.latitude === "" ? null : Number(produceForm.latitude),
-            longitude: produceForm.longitude === "" ? null : Number(produceForm.longitude),
-          }),
-        }
-      );
+   try {
+  const formData = new FormData();
+
+  formData.append("name", produceForm.name);
+  formData.append("quantity", Number(produceForm.quantity));
+  formData.append("price", Number(produceForm.price));
+  formData.append("location", produceForm.location);
+  formData.append("harvestDate", produceForm.harvestDate);
+  formData.append("farmingMethod", produceForm.farmingMethod);
+  formData.append("pesticide", produceForm.pesticide);
+
+  formData.append(
+    "latitude",
+    produceForm.latitude === ""
+      ? ""
+      : Number(produceForm.latitude)
+  );
+
+  formData.append(
+    "longitude",
+    produceForm.longitude === ""
+      ? ""
+      : Number(produceForm.longitude)
+  );
+
+  if (produceForm.image) {
+    formData.append("image", produceForm.image);
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/produce`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }
+  );
 
       const data = await response.json();
 
@@ -3114,6 +4308,13 @@ if (
             myProduce={myProduce}
             orders={orders}
             updateOrderStatus={updateOrderStatus}
+            bulkRequirements={bulkRequirements}
+bulkLoading={bulkLoading}
+selectedBulkRequirement={selectedBulkRequirement}
+setSelectedBulkRequirement={setSelectedBulkRequirement}
+bulkOfferForm={bulkOfferForm}
+setBulkOfferForm={setBulkOfferForm}
+bulkOfferLoading={bulkOfferLoading}
           />
         );
 
@@ -3148,6 +4349,7 @@ if (
             openOrderPage={openOrderPage}
             openFarmerProfile={openFarmerProfile}
             setPage={setPage}
+            token={token}
           />
         );
 
@@ -3201,6 +4403,7 @@ if (
       />
 
       {renderPage()}
+      <VoiceAssistant setPage={setPage} />
     </>
   );
 }

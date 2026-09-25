@@ -84,6 +84,11 @@ const produceSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    imageUrl: {
+  type: String,
+  default: "",
+  trim: true,
+},
   },
 
   // Automatically creates:
