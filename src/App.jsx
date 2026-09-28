@@ -1501,12 +1501,14 @@ function AuthPage({
 
 function FarmerPage({
   user,
+  token,
   message,
   produceForm,
   setProduceForm,
   handleAddProduce,
   loading,
   myProduce,
+  fetchMyProduce,
   orders,
   updateOrderStatus,
   bulkRequirements,
@@ -4553,6 +4555,7 @@ if (
         return (
           <FarmerPage
             user={user}
+            token={token}
             message={message}
             produceForm={produceForm}
             setProduceForm={setProduceForm}
