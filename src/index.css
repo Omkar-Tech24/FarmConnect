@@ -1,4 +1,34 @@
-html {
+
+/* =====================================================
+   FARMCONNECT DESIGN SYSTEM
+===================================================== */
+
+:root {
+  --fc-forest: #123b24;
+  --fc-green: #3f8f4a;
+  --fc-green-dark: #2f7139;
+  --fc-green-light: #eaf4e8;
+
+  --fc-cream: #fffdf7;
+  --fc-wheat: #e7b84b;
+  --fc-terracotta: #d96c45;
+
+  --fc-text: #1d2b21;
+  --fc-muted: #68756c;
+  --fc-border: #dce7dd;
+
+  --fc-white: #ffffff;
+
+  --fc-radius-sm: 10px;
+  --fc-radius-md: 16px;
+  --fc-radius-lg: 24px;
+
+  --fc-shadow-sm:
+    0 6px 20px rgba(18, 59, 36, 0.07);
+
+  --fc-shadow-md:
+    0 15px 40px rgba(18, 59, 36, 0.11);
+}html {
   font-family: Arial, Helvetica, sans-serif;
   background: #f6faf7;
 }
@@ -16,4 +46,748 @@ select {
 
 button {
   cursor: pointer;
+}
+/* =====================================================
+   FARMCONNECT ROLE CARDS
+===================================================== */
+
+.role-section {
+  padding: 90px 7%;
+  background: #f7faf7;
+}
+
+.role-section .section-heading {
+  max-width: 760px;
+  margin: 0 auto 50px;
+  text-align: center;
+}
+
+.role-section .section-label {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #2f7d32;
+}
+
+.role-section .section-heading h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.15;
+  color: #173b22;
+}
+
+.role-section .section-heading h2 span {
+  color: #2f7d32;
+}
+
+.role-section .section-heading p {
+  margin: 18px auto 0;
+  max-width: 650px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #66736a;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.role-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e3ebe3;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(25, 60, 35, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 18px 40px rgba(25, 60, 35, 0.14);
+}
+
+.role-card-image {
+  display: block;
+  width: 100%;
+  height: 245px;
+  object-fit: cover;
+}
+
+.role-card-content {
+  padding: 28px;
+}
+
+.role-label {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  color: #2f7d32;
+}
+
+.role-card-content h3 {
+  margin: 0 0 12px;
+  font-size: 25px;
+  color: #173b22;
+}
+
+.role-card-content p {
+  min-height: 82px;
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #68746c;
+}
+
+.role-card .secondary-btn {
+  padding: 11px 20px;
+  border: 1px solid #2f7d32;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #2f7d32;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-card .secondary-btn:hover {
+  background: #2f7d32;
+  color: #ffffff;
+}
+
+/* =====================================================
+   ROLE CARDS — MOBILE
+===================================================== */
+
+@media (max-width: 900px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .role-section .section-heading h2 {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 600px) {
+  .role-section {
+    padding: 65px 20px;
+  }
+
+  .role-section .section-heading h2 {
+    font-size: 30px;
+  }
+
+  .role-section .section-heading p {
+    font-size: 15px;
+  }
+
+  .role-card-image {
+    height: 220px;
+  }
+}
+/* =====================================================
+   FARMCONNECT HERO — STARTUP STYLE
+===================================================== */
+
+.hero-modern {
+  position: relative;
+  min-height: calc(100vh - 72px);
+  padding: 80px 7%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+  align-items: center;
+  gap: 70px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(101, 170, 111, 0.16),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #f8fcf8 0%,
+      #edf7ee 100%
+    );
+}
+
+/* subtle background shape */
+
+.hero-modern::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  right: -180px;
+  top: -180px;
+  border-radius: 50%;
+  background: rgba(70, 145, 82, 0.08);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+}
+
+/* BADGE */
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 9px 15px;
+  margin-bottom: 24px;
+
+  border: 1px solid #cfe2d2;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.8);
+
+  color: #2d7140;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.hero-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3d914d;
+}
+
+/* HEADING */
+
+.hero-modern h1 {
+  max-width: 720px;
+
+  margin: 0;
+
+  font-size: clamp(52px, 6vw, 78px);
+  line-height: 0.98;
+  letter-spacing: -4px;
+
+  font-weight: 850;
+
+  color: #123c20;
+}
+
+.hero-modern h1 span {
+  display: block;
+  color: #318047;
+}
+
+/* DESCRIPTION */
+
+.hero-description {
+  max-width: 620px;
+
+  margin: 27px 0 31px;
+
+  font-size: 18px;
+  line-height: 1.75;
+
+  color: #617066;
+}
+
+/* BUTTONS */
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  align-items: center;
+}
+
+.hero-primary,
+.hero-secondary {
+  min-height: 52px;
+  padding: 14px 21px;
+
+  border-radius: 12px;
+
+  font-weight: 750;
+}
+
+.hero-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-primary span {
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.hero-primary:hover span {
+  transform: translateX(4px);
+}
+
+/* TRUST ITEMS */
+
+.hero-trust {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+
+  max-width: 680px;
+
+  margin-top: 34px;
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px;
+
+  border: 1px solid #d8e6da;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(8px);
+}
+
+.trust-icon {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 34px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: #e2f1e5;
+
+  color: #2e7841;
+
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.hero-trust-item strong,
+.hero-trust-item span {
+  display: block;
+}
+
+.hero-trust-item strong {
+  margin-bottom: 3px;
+
+  color: #285a35;
+  font-size: 12px;
+}
+
+.hero-trust-item span {
+  color: #77847b;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+/* =====================================================
+   HERO IMAGE
+===================================================== */
+
+.hero-photo-area {
+  position: relative;
+
+  width: min(100%, 570px);
+
+  justify-self: end;
+
+  padding: 25px;
+}
+
+.hero-photo-frame {
+  position: relative;
+
+  min-height: 560px;
+
+  overflow: hidden;
+
+  border-radius: 34px;
+
+  background: #dcebdd;
+
+  box-shadow:
+    0 30px 70px rgba(29, 73, 39, 0.18),
+    0 5px 18px rgba(29, 73, 39, 0.08);
+
+  transform: rotate(1deg);
+}
+
+.hero-farmer-image {
+  width: 100%;
+  height: 560px;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.7s ease;
+}
+
+.hero-photo-frame:hover .hero-farmer-image {
+  transform: scale(1.04);
+}
+
+/* IMAGE OVERLAY */
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(10, 44, 21, 0.76),
+      rgba(10, 44, 21, 0.02) 58%
+    );
+}
+
+/* LOCATION */
+
+.photo-location {
+  position: absolute;
+
+  left: 22px;
+  right: 22px;
+  bottom: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 15px;
+
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 15px;
+
+  background: rgba(11, 43, 21, 0.68);
+
+  backdrop-filter: blur(10px);
+
+  color: white;
+}
+
+.location-icon {
+  width: 35px;
+  height: 35px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.15);
+}
+
+.location-icon span {
+  font-size: 15px;
+  color: #9ed5a5;
+}
+
+.photo-location strong,
+.photo-location small {
+  display: block;
+}
+
+.photo-location strong {
+  font-size: 14px;
+}
+
+.photo-location small {
+  margin-top: 3px;
+
+  color: #d5e7d8;
+
+  font-size: 11px;
+}
+
+/* =====================================================
+   FLOATING CARDS
+===================================================== */
+
+.hero-floating-card {
+  position: absolute;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  min-width: 215px;
+
+  padding: 14px;
+
+  background: white;
+
+  border: 1px solid #dbe8dd;
+  border-radius: 17px;
+
+  box-shadow:
+    0 18px 35px rgba(26, 67, 36, 0.13);
+
+  animation: heroFloat 4s ease-in-out infinite;
+}
+
+.floating-icon,
+.floating-check {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 11px;
+
+  background: #e6f3e8;
+
+  font-size: 19px;
+}
+
+.floating-check {
+  color: #318047;
+  font-weight: 900;
+}
+
+.hero-floating-card strong,
+.hero-floating-card small {
+  display: block;
+}
+
+.hero-floating-card strong {
+  color: #214e2d;
+  font-size: 13px;
+}
+
+.hero-floating-card small {
+  margin-top: 3px;
+
+  color: #77847b;
+  font-size: 10px;
+}
+
+.card-top {
+  top: 65px;
+  left: -5px;
+}
+
+.card-bottom {
+  right: -5px;
+  bottom: 70px;
+  animation-delay: 1.2s;
+}
+
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* =====================================================
+   HERO RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+  .hero-modern {
+    grid-template-columns: 1fr;
+    gap: 45px;
+    padding-top: 60px;
+  }
+
+  .hero-content {
+    max-width: 760px;
+  }
+
+  .hero-photo-area {
+    justify-self: center;
+    width: min(100%, 620px);
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-modern {
+    min-height: auto;
+    padding: 55px 5% 70px;
+  }
+
+  .hero-modern h1 {
+    font-size: clamp(44px, 13vw, 62px);
+    letter-spacing: -3px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .hero-trust {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-photo-area {
+    padding: 12px;
+  }
+
+  .hero-photo-frame {
+    min-height: 430px;
+  }
+
+  .hero-farmer-image {
+    height: 430px;
+  }
+
+  .card-top {
+    left: -2px;
+    top: 20px;
+  }
+
+  .card-bottom {
+    right: -2px;
+    bottom: 25px;
+  }
+
+  .hero-floating-card {
+    min-width: 175px;
+    padding: 10px;
+  }
+}
+/* =====================================================
+   FARMCONNECT — MODERN NAVBAR
+===================================================== */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  height: 76px;
+
+  display: flex;
+  align-items: center;
+
+  background: rgba(255, 253, 247, 0.94);
+
+  border-bottom: 1px solid var(--fc-border);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 2px 15px rgba(18, 59, 36, 0.04);
+}
+
+/* LOGO */
+
+.logo {
+  color: var(--fc-forest) !important;
+
+  font-weight: 850;
+
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  color: var(--fc-green);
+}
+
+/* NAV LINKS */
+
+.navbar a,
+.navbar button {
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.navbar a:hover {
+  color: var(--fc-green) !important;
+}
+
+/* ACTIVE NAVIGATION */
+
+.navbar .active {
+  color: var(--fc-green) !important;
+
+  background: var(--fc-green-light);
+
+  border-radius: 10px;
+}
+
+/* LOGIN */
+
+.login-nav-btn {
+  border: none !important;
+
+  border-radius: 11px !important;
+
+  background: var(--fc-forest) !important;
+
+  color: white !important;
+
+  padding: 11px 20px !important;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-nav-btn:hover {
+  background: var(--fc-green-dark) !important;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(47, 113, 57, 0.2);
+}
+
+/* USER NAME */
+
+.user-name {
+  color: var(--fc-forest) !important;
+
+  font-weight: 700;
+}
+/* =====================================================
+   GLOBAL FARMCONNECT BACKGROUND
+===================================================== */
+
+body {
+  background: var(--fc-cream);
+  color: var(--fc-text);
+}
+
+button {
+  font-family: inherit;
 }

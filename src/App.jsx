@@ -973,111 +973,286 @@ function Navbar({
 function HomePage({ user, setPage }) {
   return (
     <>
+     {/* =====================================================
+    HERO
+===================================================== */}
+
+<section className="hero hero-modern">
+
+  {/* LEFT SIDE */}
+  <div className="hero-content">
+
+    <div className="hero-badge">
+      <span className="hero-badge-dot"></span>
+      FARM TO MARKET • DIRECT • TRANSPARENT
+    </div>
+
+    <h1>
+      Fresh From Indian
+      <span> Farms. Direct To You.</span>
+    </h1>
+
+    <p className="hero-description">
+      Discover fresh produce directly from Indian farmers.
+      Buy for your home, source for your business, or sell
+      your harvest through one connected marketplace.
+    </p>
+
+    <div className="hero-buttons">
+
+      <button
+        className="primary-btn hero-primary"
+        type="button"
+        onClick={() => setPage("marketplace")}
+      >
+        Explore Marketplace
+        <span>→</span>
+      </button>
+
+      <button
+        className="secondary-btn hero-secondary"
+        type="button"
+        onClick={() =>
+          user ? setPage("farmer") : setPage("auth")
+        }
+      >
+        {user?.role === "Farmer"
+          ? "Open Farmer Dashboard"
+          : "I'm a Farmer"}
+      </button>
+
+    </div>
+
+    {/* TRUST POINTS */}
+    <div className="hero-trust">
+
+      <div className="hero-trust-item">
+        <div className="trust-icon">01</div>
+
+        <div>
+          <strong>Direct sourcing</strong>
+          <span>Connect closer to the farm</span>
+        </div>
+      </div>
+
+      <div className="hero-trust-item">
+        <div className="trust-icon">02</div>
+
+        <div>
+          <strong>Clear pricing</strong>
+          <span>See the listed farm price</span>
+        </div>
+      </div>
+
+      <div className="hero-trust-item">
+        <div className="trust-icon">03</div>
+
+        <div>
+          <strong>Know your food</strong>
+          <span>View farming information</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  {/* RIGHT SIDE */}
+  <div className="hero-photo-area">
+
+    <div className="hero-photo-frame">
+
+      <img
+        src="/images/hero-farmer.jpg"
+        alt="Indian farmer working in an agricultural field"
+        className="hero-farmer-image"
+      />
+
+      <div className="photo-overlay"></div>
+
+      <div className="photo-location">
+
+        <div className="location-icon">
+          <span>●</span>
+        </div>
+
+        <div>
+          <strong>Indian Farms</strong>
+          <small>Fresh produce • Local farmers</small>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* FLOATING CARD 1 */}
+    <div className="hero-floating-card card-top">
+
+      <div className="floating-icon">
+        🌾
+      </div>
+
+      <div>
+        <strong>Fresh Produce</strong>
+        <small>Direct from the farm</small>
+      </div>
+
+    </div>
+
+
+    {/* FLOATING CARD 2 */}
+    <div className="hero-floating-card card-bottom">
+
+      <div className="floating-check">
+        ✓
+      </div>
+
+      <div>
+        <strong>Transparent</strong>
+        <small>Know where your food comes from</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
       {/* =====================================================
-          HERO
-      ===================================================== */}
-      <section className="hero hero-modern">
-        <div className="hero-content">
-          <div className="hero-badge">
-            <span>🌱</span>
-            DIRECT • TRANSPARENT • LOCAL
-          </div>
+    FARMCONNECT FOR EVERYONE
+===================================================== */}
 
-          <h1>
-            Fresh From Indian
-            <span> Farms. Direct To You.</span>
-          </h1>
+<section className="role-section">
 
-          <p className="hero-description">
-            FarmConnect connects farmers directly with consumers
-            and retailers, making fresh agricultural produce more
-            accessible, transparent and fairly priced.
-          </p>
+  <div className="section-heading modern-heading">
+    <span className="section-label">WHO IS FARMCONNECT FOR?</span>
 
-          <div className="hero-buttons">
-            <button
-              className="primary-btn hero-primary"
-              type="button"
-              onClick={() => setPage("marketplace")}
-            >
-              🛒 Explore Marketplace
-            </button>
+    <h2>
+      One platform for
+      <span> everyone in agriculture.</span>
+    </h2>
 
-            {!user && (
-              <button
-                className="secondary-btn hero-secondary"
-                type="button"
-                onClick={() => setPage("auth")}
-              >
-                🤝 Join FarmConnect
-              </button>
-            )}
-          </div>
+    <p>
+      Whether you grow, source or buy food, FarmConnect
+      connects you through one simple platform.
+    </p>
+  </div>
 
-          <div className="hero-trust">
-            <div className="hero-trust-item">
-              <div className="trust-icon">🌾</div>
-              <div>
-                <strong>Direct from farms</strong>
-                <span>Buy closer to the source</span>
-              </div>
-            </div>
+  <div className="role-grid">
 
-            <div className="hero-trust-item">
-              <div className="trust-icon">₹</div>
-              <div>
-                <strong>Transparent pricing</strong>
-                <span>See the listed farm price</span>
-              </div>
-            </div>
+    {/* FARMER */}
+    <div className="role-card">
 
-            <div className="hero-trust-item">
-              <div className="trust-icon">🔍</div>
-              <div>
-                <strong>Know your food</strong>
-                <span>View farming information</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <img
+        src="/images/farmer-card.jpg"
+        alt="Farmer working on a farm"
+        className="role-card-image"
+      />
 
-        {/* REAL FARMER IMAGE */}
-        <div className="hero-photo-area">
-          <div className="hero-photo-frame">
-            <img
-              src="/images/hero-farmer.jpg"
-              alt="Indian farmer working in an agricultural field"
-              className="hero-farmer-image"
-            />
+      <div className="role-card-content">
 
-            <div className="photo-overlay"></div>
+        <span className="role-label">
+          FOR FARMERS
+        </span>
 
-            <div className="photo-location">
-              <span>📍</span>
-              <div>
-                <strong>Indian Farms</strong>
-                <small>Fresh produce • Local farmers</small>
-              </div>
-            </div>
-          </div>
+        <h3>Sell Your Produce</h3>
 
-          <div className="hero-floating-card card-top">
-            <div className="floating-icon">🥬</div>
-            <div>
-              <strong>Fresh Produce</strong>
-              <small>Direct from the farm</small>
-            </div>
-          </div>
+        <p>
+          List your crops with photos, quantity and price,
+          and connect directly with buyers.
+        </p>
 
-          <div className="hero-floating-card card-bottom">
-            <div className="floating-check">✓</div>
-            <div>
-              <strong>Food Transparency</strong>
-              <small>Know how it was grown</small>
-            </div>
-          </div>
-        </div>
-      </section>
+        <button
+          className="secondary-btn"
+          type="button"
+          onClick={() =>
+            user ? setPage("farmer") : setPage("auth")
+          }
+        >
+          {user?.role === "Farmer"
+            ? "Open Farmer Dashboard"
+            : "Join as Farmer"}
+        </button>
+
+      </div>
+    </div>
+
+
+    {/* RETAILER */}
+    <div className="role-card">
+
+      <img
+        src="/images/retailer-card.png"
+        alt="Retailer buying agricultural produce"
+        className="role-card-image"
+      />
+
+      <div className="role-card-content">
+
+        <span className="role-label">
+          FOR RETAILERS
+        </span>
+
+        <h3>Source in Bulk</h3>
+
+        <p>
+          Find fresh produce from farmers and post
+          bulk requirements for your business.
+        </p>
+
+        <button
+          className="secondary-btn"
+          type="button"
+          onClick={() =>
+            user ? setPage("retailer") : setPage("auth")
+          }
+        >
+          {user?.role === "Retailer"
+            ? "Open Retailer Dashboard"
+            : "Join as Retailer"}
+        </button>
+
+      </div>
+    </div>
+
+
+    {/* CONSUMER */}
+    <div className="role-card">
+
+      <img
+        src="/images/consumer-card.jpg"
+        alt="Consumer buying fresh agricultural produce"
+        className="role-card-image"
+      />
+
+      <div className="role-card-content">
+
+        <span className="role-label">
+          FOR CONSUMERS
+        </span>
+
+        <h3>Buy Fresh Produce</h3>
+
+        <p>
+          Browse fresh produce listed by farmers and
+          place your order through FarmConnect.
+        </p>
+
+        <button
+          className="secondary-btn"
+          type="button"
+          onClick={() => setPage("marketplace")}
+        >
+          Explore Marketplace
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</section>
 
       {/* =====================================================
           WHY FARMCONNECT
@@ -1150,6 +1325,8 @@ function HomePage({ user, setPage }) {
           </div>
         </div>
       </section>
+     
+   
 
       {/* =====================================================
           HOW IT WORKS
