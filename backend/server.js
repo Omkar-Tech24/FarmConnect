@@ -565,15 +565,24 @@ app.put(
         });
       }
 
-      // Make sure this farmer owns this produce
-      if (
-        produce.farmerId.toString() !==
-        req.user.id.toString()
-      ) {
-        return res.status(403).json({
-          message: "You can only edit your own produce.",
-        });
-      }
+     const produceFarmerId =
+  produce.farmerId?._id?.toString() ||
+  produce.farmerId?.toString();
+
+const currentUserId =
+  req.user?.userId?.toString() ||
+  req.user?.id?.toString();
+
+if (
+  !produceFarmerId ||
+  !currentUserId ||
+  produceFarmerId !== currentUserId
+) {
+  return res.status(403).json({
+    message:
+      "You can only edit your own produce.",
+  });
+}
 
       const {
         name,
