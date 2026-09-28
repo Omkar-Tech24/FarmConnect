@@ -1897,8 +1897,8 @@ const filteredBulkRequirements = bulkRequirements.filter(
 
                 setEditingProduce(null);
 
-                // Refresh farmer's produce list
-                fetchMyProduce();
+// Reload the page so the updated produce is fetched from MongoDB
+window.location.reload();
               } catch (error) {
                 console.error(
                   "Update produce error:",
