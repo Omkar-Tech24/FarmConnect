@@ -1023,38 +1023,31 @@ function HomePage({ user, setPage }) {
 
     </div>
 
-    {/* TRUST POINTS */}
     <div className="hero-trust">
-
-      <div className="hero-trust-item">
-        <div className="trust-icon">01</div>
-
-        <div>
-          <strong>Direct sourcing</strong>
-          <span>Connect closer to the farm</span>
-        </div>
-      </div>
-
-      <div className="hero-trust-item">
-        <div className="trust-icon">02</div>
-
-        <div>
-          <strong>Clear pricing</strong>
-          <span>See the listed farm price</span>
-        </div>
-      </div>
-
-      <div className="hero-trust-item">
-        <div className="trust-icon">03</div>
-
-        <div>
-          <strong>Know your food</strong>
-          <span>View farming information</span>
-        </div>
-      </div>
-
+  <div className="trust-card">
+    <div className="trust-number">01</div>
+    <div className="trust-content">
+      <h4>Direct Sourcing</h4>
+      <p>Connect closer to the farm</p>
     </div>
+  </div>
 
+  <div className="trust-card">
+    <div className="trust-number">02</div>
+    <div className="trust-content">
+      <h4>Clear Pricing</h4>
+      <p>See the listed farm price</p>
+    </div>
+  </div>
+
+  <div className="trust-card">
+    <div className="trust-number">03</div>
+    <div className="trust-content">
+      <h4>Know Your Food</h4>
+      <p>View farming information</p>
+    </div>
+  </div>
+</div>
   </div>
 
 
