@@ -1517,6 +1517,7 @@ function FarmerPage({
   setBulkOfferForm,
   bulkOfferLoading,
 }) {
+  const [editingProduce, setEditingProduce] = useState(null);
   if (!user || user.role !== "Farmer") {
     return (
       <div className="page-container">
@@ -1782,27 +1783,279 @@ const filteredBulkRequirements = bulkRequirements.filter(
         </div>
 
         <div className="dashboard-card">
-          <h2>My Listed Produce</h2>
+  <h2>My Listed Produce</h2>
 
-          {myProduce.length === 0 ? (
-            <div className="empty-small">
-              <span>🌾</span>
-              <p>No produce listed yet.</p>
-            </div>
-          ) : (
-            <div className="mini-list">
-              {myProduce.map((item) => (
-                <div className="mini-item" key={item._id}>
-                  <strong>{item.name}</strong>
-                  <span>{item.quantity} kg</span>
-                  <span>₹{item.price}/kg</span>
-                  <span>📍 {item.location}</span>
-                </div>
-              ))}
-            </div>
-          )}
+  {myProduce.length === 0 ? (
+    <div className="empty-small">
+      <span>🌾</span>
+      <p>No produce listed yet.</p>
+    </div>
+  ) : (
+    <div className="mini-list">
+      {myProduce.map((item) => (
+        <div className="mini-item" key={item._id}>
+          <strong>{item.name}</strong>
+
+          <span>{item.quantity} kg</span>
+
+          <span>₹{item.price}/kg</span>
+
+          <span>📍 {item.location}</span>
+
+          <button
+            className="secondary-btn"
+            type="button"
+            onClick={() => {
+              setEditingProduce({
+                ...item,
+                quantity: item.quantity,
+                price: item.price,
+                location: item.location || "",
+                harvestDate: item.harvestDate
+                  ? item.harvestDate.slice(0, 10)
+                  : "",
+                farmingMethod:
+                  item.farmingMethod || "",
+                pesticide:
+                  item.pesticide || "",
+                latitude:
+                  item.latitude ?? "",
+                longitude:
+                  item.longitude ?? "",
+              });
+            }}
+          >
+            ✏️ Edit
+          </button>
         </div>
+      ))}
+    </div>
+  )}
+</div>
             </div>
+                  {/* =====================================================
+          EDIT PRODUCE
+          ===================================================== */}
+
+      {editingProduce && (
+        <div className="dashboard-card">
+          <h2>✏️ Edit Produce</h2>
+
+          <form
+            className="produce-form"
+            onSubmit={async (event) => {
+              event.preventDefault();
+
+              try {
+                const response = await fetch(
+                  `${API_URL}/api/produce/${editingProduce._id}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                      name: editingProduce.name,
+                      quantity: Number(
+                        editingProduce.quantity
+                      ),
+                      price: Number(
+                        editingProduce.price
+                      ),
+                      location:
+                        editingProduce.location,
+                      harvestDate:
+                        editingProduce.harvestDate,
+                      farmingMethod:
+                        editingProduce.farmingMethod,
+                      pesticide:
+                        editingProduce.pesticide,
+                      latitude:
+                        editingProduce.latitude,
+                      longitude:
+                        editingProduce.longitude,
+                    }),
+                  }
+                );
+
+                const data =
+                  await response.json();
+
+                if (!response.ok) {
+                  throw new Error(
+                    data.message ||
+                      "Failed to update produce."
+                  );
+                }
+
+                alert(
+                  "Produce updated successfully!"
+                );
+
+                setEditingProduce(null);
+
+                // Refresh farmer's produce list
+                fetchMyProduce();
+              } catch (error) {
+                console.error(
+                  "Update produce error:",
+                  error
+                );
+
+                alert(
+                  error.message ||
+                    "Failed to update produce."
+                );
+              }
+            }}
+          >
+            <label htmlFor="edit-produce-name">
+              Produce Name
+            </label>
+
+            <input
+              id="edit-produce-name"
+              value={editingProduce.name}
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  name: event.target.value,
+                }))
+              }
+              required
+            />
+
+            <label htmlFor="edit-produce-quantity">
+              Quantity (kg)
+            </label>
+
+            <input
+              id="edit-produce-quantity"
+              type="number"
+              min="1"
+              value={editingProduce.quantity}
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  quantity:
+                    event.target.value,
+                }))
+              }
+              required
+            />
+
+            <label htmlFor="edit-produce-price">
+              Price per kg (₹)
+            </label>
+
+            <input
+              id="edit-produce-price"
+              type="number"
+              min="0"
+              value={editingProduce.price}
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  price:
+                    event.target.value,
+                }))
+              }
+              required
+            />
+
+            <label htmlFor="edit-produce-location">
+              Location
+            </label>
+
+            <input
+              id="edit-produce-location"
+              value={editingProduce.location}
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  location:
+                    event.target.value,
+                }))
+              }
+              required
+            />
+
+            <label htmlFor="edit-produce-date">
+              Harvest Date
+            </label>
+
+            <input
+              id="edit-produce-date"
+              type="date"
+              value={editingProduce.harvestDate}
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  harvestDate:
+                    event.target.value,
+                }))
+              }
+              required
+            />
+
+            <label htmlFor="edit-produce-method">
+              Farming Method
+            </label>
+
+            <input
+              id="edit-produce-method"
+              value={
+                editingProduce.farmingMethod
+              }
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  farmingMethod:
+                    event.target.value,
+                }))
+              }
+            />
+
+            <label htmlFor="edit-produce-pesticide">
+              Pesticide Information
+            </label>
+
+            <input
+              id="edit-produce-pesticide"
+              value={
+                editingProduce.pesticide
+              }
+              onChange={(event) =>
+                setEditingProduce((previous) => ({
+                  ...previous,
+                  pesticide:
+                    event.target.value,
+                }))
+              }
+            />
+
+            <div className="form-actions">
+              <button
+                className="primary-btn"
+                type="submit"
+              >
+                Save Changes
+              </button>
+
+              <button
+                className="secondary-btn"
+                type="button"
+                onClick={() =>
+                  setEditingProduce(null)
+                }
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* =====================================================
           BULK REQUIREMENTS FROM RETAILERS

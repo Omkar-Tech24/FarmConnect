@@ -545,6 +545,101 @@ imageUrl:
     }
   }
 );
+// UPDATE PRODUCE
+app.put(
+  "/api/produce/:id",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message: "Only farmers can update produce.",
+        });
+      }
+
+      const produce = await Produce.findById(req.params.id);
+
+      if (!produce) {
+        return res.status(404).json({
+          message: "Produce not found.",
+        });
+      }
+
+      // Make sure this farmer owns this produce
+      if (
+        produce.farmerId.toString() !==
+        req.user.id.toString()
+      ) {
+        return res.status(403).json({
+          message: "You can only edit your own produce.",
+        });
+      }
+
+      const {
+        name,
+        quantity,
+        price,
+        location,
+        harvestDate,
+        farmingMethod,
+        pesticide,
+        latitude,
+        longitude,
+      } = req.body;
+
+      if (name !== undefined) {
+        produce.name = name;
+      }
+
+      if (quantity !== undefined) {
+        produce.quantity = Number(quantity);
+      }
+
+      if (price !== undefined) {
+        produce.price = Number(price);
+      }
+
+      if (location !== undefined) {
+        produce.location = location;
+      }
+
+      if (harvestDate !== undefined) {
+        produce.harvestDate = harvestDate;
+      }
+
+      if (farmingMethod !== undefined) {
+        produce.farmingMethod = farmingMethod;
+      }
+
+      if (pesticide !== undefined) {
+        produce.pesticide = pesticide;
+      }
+
+      if (latitude !== undefined) {
+        produce.latitude =
+          latitude === "" ? null : Number(latitude);
+      }
+
+      if (longitude !== undefined) {
+        produce.longitude =
+          longitude === "" ? null : Number(longitude);
+      }
+
+      await produce.save();
+
+      res.status(200).json({
+        message: "Produce updated successfully.",
+        produce,
+      });
+    } catch (error) {
+      console.error("Update produce error:", error);
+
+      res.status(500).json({
+        message: "Failed to update produce.",
+      });
+    }
+  }
+);
 
 /* =========================================================
    GET ALL PRODUCE
