@@ -987,13 +987,10 @@ function VoiceAssistant({ setPage }) {
 
       </div>
     )}
-
-    {/* FLOATING BUTTON */}
-    <button
+{/* FLOATING AI ASSISTANT BUTTON */}
+<button
   type="button"
-  className={`voice-floating-button ${
-    isListening ? "active" : ""
-  }`}
+  className="voice-floating-button"
   onClick={() =>
     setIsOpen(
       (previous) => !previous
@@ -1001,83 +998,15 @@ function VoiceAssistant({ setPage }) {
   }
   aria-label="Open FarmConnect AI assistant"
 >
-  {isListening ? (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="7"
-        fill="currentColor"
-      />
-    </svg>
-  ) : isThinking ? (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        d="M9 3h6l1 3 3 2v6l-3 2-1 5H9l-1-5-3-2V8l3-2 1-3Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
-      <circle
-        cx="9"
-        cy="11"
-        r="1"
-        fill="currentColor"
-      />
-      <circle
-        cx="15"
-        cy="11"
-        r="1"
-        fill="currentColor"
-      />
-      <path
-        d="M9 15h6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  ) : (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="9"
-        y="3"
-        width="6"
-        height="11"
-        rx="3"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path
-        d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  )}
+  <span className="voice-floating-label">
+    AI Assistant
+  </span>
 </button>
 
-      <span className="voice-floating-label">
-        AI Assistant
-      </span>
-
-  </>
+</>
 );
 }
+  
 
 /* =========================================================
    NAVBAR
@@ -1720,51 +1649,69 @@ function HomePage({ user, setPage }) {
           </div>
 
          <div className="transparency-grid">
-  <div className="transparency-card">
-    <span
-      className="transparency-card-icon"
-      aria-hidden="true"
+ <div className="transparency-card">
+  <span
+    className="transparency-card-icon"
+    aria-hidden="true"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <svg
-        viewBox="0 0 24 24"
-        width="24"
-        height="24"
-      >
-        <path
-          d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-        />
+      <path d="M9 3h6" />
+      <path d="M10 3v6.5L5.5 17a3 3 0 0 0 2.6 4.5h7.8a3 3 0 0 0 2.6-4.5L14 9.5V3" />
+      <path d="M8 15h8" />
+      <path d="M9 12h6" />
+    </svg>
+  </span>
 
-        <path
-          d="M5 20c3-5 7-8 13-11"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
+  <h3>Pesticide Information</h3>
 
-    <h3>Farming Method</h3>
-              <p>
-                See the farming method declared by the farmer.
-              </p>
-            </div>
+  <p>
+    Farmers can disclose pesticide usage information.
+  </p>
+</div>
 
             <div className="transparency-card">
-              <span>🧪</span>
-              <h3>Pesticide Information</h3>
-              <p>
-                Farmers can disclose pesticide usage information.
-              </p>
-            </div>
+  <span
+    className="transparency-card-icon"
+    aria-hidden="true"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="16"
+        rx="2"
+      />
+      <path d="M16 3v4" />
+      <path d="M8 3v4" />
+      <path d="M3 10h18" />
+      <path d="M8 14h.01" />
+      <path d="M12 14h.01" />
+      <path d="M16 14h.01" />
+      <path d="M8 18h.01" />
+      <path d="M12 18h.01" />
+    </svg>
+  </span>
 
-            <div className="transparency-card">
-              <span>📅</span>
-              <h3>Harvest Date</h3>
+  <h3>Harvest Date</h3>
               <p>
                 See when the produce was harvested.
               </p>
