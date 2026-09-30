@@ -344,6 +344,270 @@ app.get(
     }
   }
 );
+// =========================================================
+// FARMER PROFILE - GET MY PROFILE
+// =========================================================
+
+app.get(
+  "/api/farmer/profile",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message: "Only farmers can access this profile.",
+        });
+      }
+
+      const farmer = await User.findById(
+        req.user.userId
+      ).select("-password");
+
+      if (!farmer) {
+        return res.status(404).json({
+          message: "Farmer profile not found.",
+        });
+      }
+
+      res.json({
+        profile: farmer,
+      });
+    } catch (error) {
+      console.error(
+        "Get farmer profile error:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Unable to load farmer profile.",
+      });
+    }
+  }
+);
+
+
+// =========================================================
+// FARMER PROFILE - UPDATE MY PROFILE
+// =========================================================
+
+app.patch(
+  "/api/farmer/profile",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message: "Only farmers can update this profile.",
+        });
+      }
+
+      const {
+        name,
+        location,
+        farmName,
+        farmSize,
+        farmingSince,
+        farmingType,
+        mainCrops,
+        bio,
+      } = req.body;
+
+      const farmer = await User.findById(
+        req.user.userId
+      );
+
+      if (!farmer) {
+        return res.status(404).json({
+          message: "Farmer profile not found.",
+        });
+      }
+
+      // -----------------------------------------
+      // BASIC VALIDATION
+      // -----------------------------------------
+
+      if (
+        name !== undefined &&
+        (!String(name).trim() ||
+          String(name).trim().length < 2 ||
+          String(name).trim().length > 100)
+      ) {
+        return res.status(400).json({
+          message:
+            "Name must be between 2 and 100 characters.",
+        });
+      }
+
+      if (
+        location !== undefined &&
+        (!String(location).trim() ||
+          String(location).trim().length > 200)
+      ) {
+        return res.status(400).json({
+          message:
+            "Location must be between 1 and 200 characters.",
+        });
+      }
+
+      if (
+        farmName !== undefined &&
+        String(farmName).length > 150
+      ) {
+        return res.status(400).json({
+          message:
+            "Farm name cannot exceed 150 characters.",
+        });
+      }
+
+      if (
+        farmSize !== undefined &&
+        farmSize !== null &&
+        (!Number.isFinite(Number(farmSize)) ||
+          Number(farmSize) < 0)
+      ) {
+        return res.status(400).json({
+          message: "Farm size must be a valid positive number.",
+        });
+      }
+
+      if (
+        farmingSince !== undefined &&
+        farmingSince !== null &&
+        (!Number.isInteger(Number(farmingSince)) ||
+          Number(farmingSince) < 1900 ||
+          Number(farmingSince) >
+            new Date().getFullYear())
+      ) {
+        return res.status(400).json({
+          message: "Invalid farming start year.",
+        });
+      }
+
+      if (
+        farmingType !== undefined &&
+        ![
+          "",
+          "Organic",
+          "Conventional",
+          "Natural",
+          "Mixed",
+        ].includes(farmingType)
+      ) {
+        return res.status(400).json({
+          message: "Invalid farming type.",
+        });
+      }
+
+      if (
+        bio !== undefined &&
+        String(bio).length > 1000
+      ) {
+        return res.status(400).json({
+          message:
+            "Bio cannot exceed 1000 characters.",
+        });
+      }
+
+      if (
+        mainCrops !== undefined &&
+        (
+          !Array.isArray(mainCrops) ||
+          mainCrops.length > 20 ||
+          mainCrops.some(
+            (crop) =>
+              typeof crop !== "string" ||
+              crop.trim().length === 0 ||
+              crop.trim().length > 50
+          )
+        )
+      ) {
+        return res.status(400).json({
+          message:
+            "Main crops must be a list of valid crop names.",
+        });
+      }
+
+      // -----------------------------------------
+      // UPDATE ONLY ALLOWED PROFILE FIELDS
+      // -----------------------------------------
+
+      if (name !== undefined) {
+        farmer.name = String(name).trim();
+      }
+
+      if (location !== undefined) {
+        farmer.location =
+          String(location).trim();
+      }
+
+      if (farmName !== undefined) {
+        farmer.farmName =
+          String(farmName).trim();
+      }
+
+      if (farmSize !== undefined) {
+        farmer.farmSize =
+          farmSize === null
+            ? null
+            : Number(farmSize);
+      }
+
+      if (farmingSince !== undefined) {
+        farmer.farmingSince =
+          farmingSince === null
+            ? null
+            : Number(farmingSince);
+      }
+
+      if (farmingType !== undefined) {
+        farmer.farmingType = farmingType;
+      }
+
+      if (mainCrops !== undefined) {
+        farmer.mainCrops = mainCrops.map(
+          (crop) => crop.trim()
+        );
+      }
+
+      if (bio !== undefined) {
+        farmer.bio = String(bio).trim();
+      }
+
+      await farmer.save();
+
+      res.json({
+        message:
+          "Farmer profile updated successfully.",
+        profile: {
+          id: farmer._id,
+          name: farmer.name,
+          email: farmer.email,
+          location: farmer.location,
+          role: farmer.role,
+          profilePhoto: farmer.profilePhoto,
+          farmName: farmer.farmName,
+          farmSize: farmer.farmSize,
+          farmingSince: farmer.farmingSince,
+          farmingType: farmer.farmingType,
+          mainCrops: farmer.mainCrops,
+          bio: farmer.bio,
+          verificationStatus:
+            farmer.verificationStatus,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Update farmer profile error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Unable to update farmer profile.",
+      });
+    }
+  }
+);
 
 /* =========================================================
    ADD PRODUCE
@@ -541,6 +805,129 @@ imageUrl:
       res.status(500).json({
         message:
           "Unable to add produce.",
+      });
+    }
+  }
+);
+/* =========================================================
+   FARMER PROFILE PHOTO UPLOAD
+   FARMER ONLY
+   ========================================================= */
+
+const profilePhotoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(
+        new Error(
+          "Only JPG, PNG, and WEBP images are allowed."
+        )
+      );
+    }
+
+    cb(null, true);
+  },
+});
+
+app.post(
+  "/api/farmer/profile/photo",
+  authenticateToken,
+  profilePhotoUpload.single("profilePhoto"),
+  async (req, res) => {
+    try {
+      if (req.user.role !== "Farmer") {
+        return res.status(403).json({
+          message:
+            "Only farmers can upload a profile photo.",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          message: "Please select a profile photo.",
+        });
+      }
+
+      const uploadResult = await new Promise(
+        (resolve, reject) => {
+          const stream =
+            cloudinary.uploader.upload_stream(
+              {
+                folder: "farmconnect/profile-photos",
+                resource_type: "image",
+                allowed_formats: [
+                  "jpg",
+                  "jpeg",
+                  "png",
+                  "webp",
+                ],
+                transformation: [
+                  {
+                    width: 500,
+                    height: 500,
+                    crop: "fill",
+                    gravity: "face",
+                  },
+                ],
+              },
+              (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              }
+            );
+
+          stream.end(req.file.buffer);
+        }
+      );
+
+      const updatedFarmer =
+        await User.findByIdAndUpdate(
+          req.user.userId,
+          {
+            profilePhoto:
+              uploadResult.secure_url,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        ).select(
+          "-password"
+        );
+
+      if (!updatedFarmer) {
+        return res.status(404).json({
+          message: "Farmer account not found.",
+        });
+      }
+
+      return res.status(200).json({
+        message:
+          "Profile photo uploaded successfully.",
+        profilePhoto:
+          updatedFarmer.profilePhoto,
+      });
+    } catch (error) {
+      console.error(
+        "Profile photo upload error:",
+        error
+      );
+
+      return res.status(500).json({
+        message:
+          "Unable to upload profile photo.",
       });
     }
   }

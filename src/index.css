@@ -903,3 +903,750 @@ button {
     font-size: 12px;
   }
 }
+/* =========================================================
+   FARMER PROFILE PHOTO
+   ========================================================= */
+
+.my-profile-avatar-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.my-profile-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    145deg,
+    #eaf4e8,
+    #d7ead8
+  );
+
+  border: 5px solid #ffffff;
+  outline: 2px solid #cfe2d2;
+
+  box-shadow:
+    0 10px 30px rgba(18, 59, 36, 0.15);
+
+  color: var(--fc-forest);
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.my-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.my-profile-avatar span {
+  line-height: 1;
+}
+
+.profile-photo-button {
+  position: absolute;
+
+  right: 4px;
+  bottom: 4px;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 19px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(18, 59, 36, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.profile-photo-button:hover {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 8px 20px rgba(18, 59, 36, 0.22);
+}
+/* =========================================================
+   FARMER PROFILE - INSTAGRAM STYLE
+   ========================================================= */
+
+.my-farmer-profile-card {
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius-lg);
+  box-shadow: var(--fc-shadow-md);
+  padding: 34px;
+}
+
+.profile-page-heading {
+  margin-bottom: 24px;
+}
+
+.profile-back-button {
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   PROFILE HEADER
+   ========================================================= */
+
+.farmer-profile-header {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--fc-border);
+}
+
+.my-profile-avatar-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.my-profile-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      145deg,
+      #edf7ee,
+      #d9ebdb
+    );
+
+  border: 5px solid #ffffff;
+  outline: 2px solid #cfe2d2;
+
+  box-shadow:
+    0 12px 32px rgba(18, 59, 36, 0.14);
+
+  color: var(--fc-forest);
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.my-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.my-profile-avatar span {
+  line-height: 1;
+}
+
+.profile-photo-button {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+
+  background: var(--fc-forest);
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px rgba(18, 59, 36, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.profile-photo-button:hover {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 9px 24px rgba(18, 59, 36, 0.28);
+}
+
+.profile-photo-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* =========================================================
+   PROFILE NAME
+   ========================================================= */
+
+.farmer-profile-header-info {
+  min-width: 0;
+}
+
+.farmer-profile-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.farmer-profile-name-row h2 {
+  margin: 0;
+  color: var(--fc-forest);
+  font-size: 42px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.verified-farmer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 13px;
+
+  border-radius: 999px;
+
+  background: #e7f7ea;
+  color: #26713a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.verified-check {
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #2f8f4e;
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   CONTACT INFORMATION
+   ========================================================= */
+
+.profile-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 0;
+
+  color: var(--fc-muted);
+  font-size: 16px;
+}
+
+.profile-contact-icon {
+  width: 24px;
+  height: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--fc-green-dark);
+}
+
+.profile-contact-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* =========================================================
+   EDIT PROFILE BUTTON
+   ========================================================= */
+
+.profile-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-width: 170px;
+  min-height: 52px;
+
+  white-space: nowrap;
+}
+
+.profile-edit-button svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* =========================================================
+   FARM DETAILS
+   ========================================================= */
+
+.profile-details-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  padding: 30px 0;
+}
+
+.profile-detail-card {
+  min-height: 170px;
+
+  padding: 22px;
+
+  border: 1px solid var(--fc-border);
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-detail-icon {
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eaf7ec;
+  color: var(--fc-green-dark);
+}
+
+.profile-detail-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.profile-detail-card span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--fc-muted);
+
+  font-size: 14px;
+}
+
+.profile-detail-card strong {
+  color: var(--fc-text);
+
+  font-size: 21px;
+  line-height: 1.3;
+}
+
+/* =========================================================
+   PROFILE SECTIONS
+   ========================================================= */
+
+.profile-section {
+  padding: 28px 0;
+
+  border-top: 1px solid var(--fc-border);
+}
+
+.profile-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  margin-bottom: 20px;
+}
+
+.profile-section-heading h3 {
+  margin: 0;
+
+  color: var(--fc-text);
+
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.profile-section-icon {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e8f6ea;
+  color: var(--fc-green-dark);
+}
+
+.profile-section-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* =========================================================
+   CROP TAGS
+   ========================================================= */
+
+.crop-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.crop-tag {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 10px 17px;
+
+  border: 1px solid #cde3d0;
+  border-radius: 999px;
+
+  background: #f5fbf5;
+
+  color: var(--fc-forest);
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   ABOUT FARMER
+   ========================================================= */
+
+.farmer-profile-bio {
+  max-width: 850px;
+
+  margin: 0;
+
+  color: var(--fc-muted);
+
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.profile-empty-text {
+  color: var(--fc-muted);
+}
+
+/* =========================================================
+   EDIT PROFILE FORM
+   ========================================================= */
+
+.farmer-profile-form {
+  padding-top: 10px;
+}
+
+.profile-form-heading {
+  margin-bottom: 24px;
+}
+
+.profile-form-heading h2 {
+  margin: 0 0 8px;
+
+  color: var(--fc-forest);
+
+  font-size: 28px;
+}
+
+.profile-form-heading p {
+  margin: 0;
+
+  color: var(--fc-muted);
+}
+
+/* =========================================================
+   CROPS EDITOR
+   ========================================================= */
+
+.profile-crops-editor {
+  margin-top: 8px;
+}
+
+.profile-crops-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 12px;
+}
+
+.profile-crops-header label {
+  margin: 0;
+}
+
+.crop-edit-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  gap: 10px;
+
+  margin-bottom: 10px;
+}
+
+.crop-edit-row input {
+  margin: 0;
+}
+
+.remove-crop-btn {
+  padding: 10px 15px;
+
+  border: 1px solid #e3c5c5;
+  border-radius: 10px;
+
+  background: #fff7f7;
+  color: #a33a3a;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+.remove-crop-btn:hover {
+  background: #fceaea;
+}
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 10px;
+  padding-top: 22px;
+
+  border-top: 1px solid var(--fc-border);
+}
+
+/* =========================================================
+   RESPONSIVE PROFILE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .farmer-profile-header {
+    grid-template-columns:
+      150px minmax(0, 1fr);
+
+    gap: 24px;
+  }
+
+  .my-profile-avatar-wrapper,
+  .my-profile-avatar {
+    width: 150px;
+    height: 150px;
+  }
+
+  .my-profile-avatar {
+    font-size: 60px;
+  }
+
+  .profile-edit-button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .profile-details-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .my-farmer-profile-card {
+    padding: 20px;
+  }
+
+  .farmer-profile-header {
+    grid-template-columns: 1fr;
+
+    text-align: center;
+  }
+
+  .my-profile-avatar-wrapper {
+    margin: 0 auto;
+  }
+
+  .farmer-profile-name-row {
+    justify-content: center;
+  }
+
+  .farmer-profile-name-row h2 {
+    font-size: 32px;
+  }
+
+  .profile-contact-item {
+    justify-content: center;
+  }
+
+  .profile-edit-button {
+    width: 100%;
+  }
+
+  .profile-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-crops-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .crop-edit-row {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .profile-form-actions button {
+    width: 100%;
+  }
+}
+/* =========================================================
+   PROFESSIONAL NAVBAR ICONS
+   ========================================================= */
+
+.user-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav-user-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+.button-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}.location-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.location-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  opacity: 0.65;
+}
+.produce-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.transparency-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.location-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.transparency-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-logo-icon {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+}
+.voice-btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.voice-listen-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

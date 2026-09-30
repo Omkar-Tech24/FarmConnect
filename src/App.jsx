@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "https://farmconnect-hawh.onrender.com";
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://farmconnect-hawh.onrender.com";
 
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
   const toRadians = (value) => (value * Math.PI) / 180;
@@ -602,15 +605,74 @@ function VoiceAssistant({ setPage }) {
           </button>
         </div>
 
-        {/* ICON */}
-        <div className="voice-assistant-icon">
-          {isListening
-            ? "🔴"
-            : isThinking
-            ? "🤖"
-            : "🌱"}
-        </div>
-
+       {/* ICON */}
+<div className="voice-assistant-icon">
+  {isListening ? (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="7"
+        fill="currentColor"
+      />
+    </svg>
+  ) : isThinking ? (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M9 3h6l1 3 3 2v6l-3 2-1 5H9l-1-5-3-2V8l3-2 1-3Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="9"
+        cy="11"
+        r="1"
+        fill="currentColor"
+      />
+      <circle
+        cx="15"
+        cy="11"
+        r="1"
+        fill="currentColor"
+      />
+      <path
+        d="M9 15h6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ) : (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5 20c3-5 7-8 13-11"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )}
+</div>
         {/* AI MESSAGE */}
         <p className="voice-status">
           {message}
@@ -692,20 +754,95 @@ function VoiceAssistant({ setPage }) {
         </div>
 
         {/* VOICE BUTTON */}
-        <button
-          type="button"
-          className={`voice-listen-btn ${
-            isListening ? "listening" : ""
-          }`}
-          onClick={startListening}
-          disabled={isListening || isThinking}
-        >
-          {isListening
-            ? "🔴 Listening..."
-            : isThinking
-            ? "🤖 Thinking..."
-            : "🎤 Tap to Speak"}
-        </button>
+       <button
+  type="button"
+  className={`voice-listen-btn ${
+    isListening ? "listening" : ""
+  }`}
+  onClick={startListening}
+  disabled={isListening || isThinking}
+>
+  {isListening ? (
+    <>
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className="voice-btn-icon"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="7"
+          fill="currentColor"
+        />
+      </svg>
+      Listening...
+    </>
+  ) : isThinking ? (
+    <>
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className="voice-btn-icon"
+      >
+        <path
+          d="M9 3h6l1 3 3 2v6l-3 2-1 5H9l-1-5-3-2V8l3-2 1-3Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="9"
+          cy="11"
+          r="1"
+          fill="currentColor"
+        />
+        <circle
+          cx="15"
+          cy="11"
+          r="1"
+          fill="currentColor"
+        />
+        <path
+          d="M9 15h6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+      Thinking...
+    </>
+  ) : (
+    <>
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        className="voice-btn-icon"
+      >
+        <rect
+          x="9"
+          y="3"
+          width="6"
+          height="11"
+          rx="3"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
+        <path
+          d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+      Tap to Speak
+    </>
+  )}
+</button>
 
        {/* LANGUAGE SELECTOR */}
 <select
@@ -716,9 +853,9 @@ function VoiceAssistant({ setPage }) {
   aria-label="Select language"
 >
   {languages.map((lang) => (
-    <option key={lang.code} value={lang.code}>
-      {lang.flag} {lang.name}
-    </option>
+   <option key={lang.code} value={lang.code}>
+  {lang.name}
+</option>
   ))}
 </select>
 
@@ -853,27 +990,91 @@ function VoiceAssistant({ setPage }) {
 
     {/* FLOATING BUTTON */}
     <button
-      type="button"
-      className={`voice-floating-button ${
-        isListening ? "active" : ""
-      }`}
-      onClick={() =>
-        setIsOpen(
-          (previous) => !previous
-        )
-      }
-      aria-label="Open FarmConnect AI assistant"
+  type="button"
+  className={`voice-floating-button ${
+    isListening ? "active" : ""
+  }`}
+  onClick={() =>
+    setIsOpen(
+      (previous) => !previous
+    )
+  }
+  aria-label="Open FarmConnect AI assistant"
+>
+  {isListening ? (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
     >
-      {isListening
-        ? "🔴"
-        : isThinking
-        ? "🤖"
-        : "🎙️"}
+      <circle
+        cx="12"
+        cy="12"
+        r="7"
+        fill="currentColor"
+      />
+    </svg>
+  ) : isThinking ? (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M9 3h6l1 3 3 2v6l-3 2-1 5H9l-1-5-3-2V8l3-2 1-3Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="9"
+        cy="11"
+        r="1"
+        fill="currentColor"
+      />
+      <circle
+        cx="15"
+        cy="11"
+        r="1"
+        fill="currentColor"
+      />
+      <path
+        d="M9 15h6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ) : (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="9"
+        y="3"
+        width="6"
+        height="11"
+        rx="3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )}
+</button>
 
       <span className="voice-floating-label">
         AI Assistant
       </span>
-    </button>
+
   </>
 );
 }
@@ -890,13 +1091,35 @@ function Navbar({
 }) {
   return (
     <nav className="navbar">
-      <button
-        className="logo"
-        onClick={() => setPage("home")}
-        type="button"
-      >
-        🌱 FarmConnect
-      </button>
+  <button
+    className="logo"
+    onClick={() => setPage("home")}
+    type="button"
+  >
+    <svg
+      className="logo-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+
+      <path
+        d="M5 20c3-5 7-8 13-11"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+
+    <span>FarmConnect</span>
+  </button>
 
       <div className="nav-links">
         <button type="button" onClick={() => setPage("home")}>
@@ -942,8 +1165,32 @@ function Navbar({
 
         {user ? (
           <>
-            <span className="user-name">👤 {user.name}</span>
+            <span className="user-name">
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    className="nav-user-icon"
+  >
+    <circle
+      cx="12"
+      cy="8"
+      r="3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
 
+    <path
+      d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+
+  {user.name}
+</span>
             <button
               className="login-nav-btn"
               type="button"
@@ -1023,31 +1270,7 @@ function HomePage({ user, setPage }) {
 
     </div>
 
-    <div className="hero-trust">
-  <div className="trust-card">
-    <div className="trust-number">01</div>
-    <div className="trust-content">
-      <h4>Direct Sourcing</h4>
-      <p>Connect closer to the farm</p>
-    </div>
-  </div>
-
-  <div className="trust-card">
-    <div className="trust-number">02</div>
-    <div className="trust-content">
-      <h4>Clear Pricing</h4>
-      <p>See the listed farm price</p>
-    </div>
-  </div>
-
-  <div className="trust-card">
-    <div className="trust-number">03</div>
-    <div className="trust-content">
-      <h4>Know Your Food</h4>
-      <p>View farming information</p>
-    </div>
-  </div>
-</div>
+    
   </div>
 
 
@@ -1083,16 +1306,44 @@ function HomePage({ user, setPage }) {
     {/* FLOATING CARD 1 */}
     <div className="hero-floating-card card-top">
 
-      <div className="floating-icon">
-        🌾
-      </div>
+  <div className="floating-icon" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+    >
+      <path
+        d="M12 20V5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
 
-      <div>
-        <strong>Fresh Produce</strong>
-        <small>Direct from the farm</small>
-      </div>
+      <path
+        d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
 
-    </div>
+      <path
+        d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+    </svg>
+  </div>
+
+  <div>
+    <strong>Fresh Produce</strong>
+    <small>Direct from the farm</small>
+  </div>
+
+</div>
 
 
     {/* FLOATING CARD 2 */}
@@ -1267,7 +1518,7 @@ function HomePage({ user, setPage }) {
 
         <div className="feature-grid modern-feature-grid">
           <div className="feature-card modern-feature-card">
-            <div className="feature-icon">🚜</div>
+            <div className="feature-icon"></div>
 
             <span className="feature-number">01</span>
 
@@ -1340,7 +1591,37 @@ function HomePage({ user, setPage }) {
         <div className="steps-grid modern-steps-grid">
           <div className="step-card modern-step-card">
             <div className="step-number">01</div>
-            <div className="step-icon">🌾</div>
+            <div className="step-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+  >
+    <path
+      d="M12 20V5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+
+    <path
+      d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinejoin="round"
+    />
+
+    <path
+      d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinejoin="round"
+    />
+  </svg>
+</div>
 
             <h3>Farmer Lists Produce</h3>
 
@@ -1352,7 +1633,27 @@ function HomePage({ user, setPage }) {
 
           <div className="step-card modern-step-card">
             <div className="step-number">02</div>
-            <div className="step-icon">🛒</div>
+           <div className="step-icon">
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path
+      d="M6 8h12l1 12H5L6 8Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 8V6a3 3 0 0 1 6 0v2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+</div>
 
             <h3>Buyer Places Order</h3>
 
@@ -1376,7 +1677,7 @@ function HomePage({ user, setPage }) {
 
           <div className="step-card modern-step-card">
             <div className="step-number">04</div>
-            <div className="step-icon">🚚</div>
+            <div className="step-icon"></div>
 
             <h3>Delivery</h3>
 
@@ -1418,10 +1719,36 @@ function HomePage({ user, setPage }) {
             </button>
           </div>
 
-          <div className="transparency-grid">
-            <div className="transparency-card">
-              <span>🌱</span>
-              <h3>Farming Method</h3>
+         <div className="transparency-grid">
+  <div className="transparency-card">
+    <span
+      className="transparency-card-icon"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path
+          d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M5 20c3-5 7-8 13-11"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
+
+    <h3>Farming Method</h3>
               <p>
                 See the farming method declared by the farmer.
               </p>
@@ -1480,9 +1807,33 @@ function HomePage({ user, setPage }) {
       {/* =====================================================
           FOOTER
       ===================================================== */}
-      <footer className="footer modern-footer">
-        <div className="footer-brand">
-          <h3>🌱 FarmConnect</h3>
+     <footer className="footer modern-footer">
+  <div className="footer-brand">
+    <h3 className="footer-logo">
+      <svg
+        className="footer-logo-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M5 20c3-5 7-8 13-11"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      FarmConnect
+    </h3>
           <p>Connecting farms with people.</p>
         </div>
 
@@ -1527,9 +1878,29 @@ function AuthPage({
 
   return (
     <div className="page-container">
-      <div className="auth-container">
-        <div className="auth-header">
-          <div className="auth-logo">🌱</div>
+  <div className="auth-container">
+    <div className="auth-header">
+      <div className="auth-logo">
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M5 20c3-5 7-8 13-11"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
 
           <h1>
             {authMode === "login"
@@ -1663,6 +2034,1085 @@ function AuthPage({
       </div>
     </div>
   );
+}/* =========================================================
+   MY FARMER PROFILE
+   ========================================================= */
+
+function MyFarmerProfile({
+  user,
+  farmerProfile,
+  farmerProfileLoading,
+  farmerProfileEditing,
+  setFarmerProfileEditing,
+  farmerProfileForm,
+  setFarmerProfileForm,
+  fetchFarmerProfile,
+  token,
+  setPage,
+}) {
+  if (!user || user.role !== "Farmer") {
+    return (
+      <div className="page-container">
+        <div className="empty-state">
+          <h2>Access Denied</h2>
+
+          <p>
+            Only farmers can access this profile.
+          </p>
+
+          <button
+            className="primary-btn"
+            type="button"
+            onClick={() => setPage("home")}
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (farmerProfileLoading) {
+    return (
+      <div className="page-container">
+        <div className="empty-state">
+          <h2>Loading Profile...</h2>
+
+          <p>
+            Please wait while we load your farm information.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!farmerProfile) {
+    return (
+      <div className="page-container">
+        <div className="empty-state">
+          <h2>Profile Not Available</h2>
+
+          <p>
+            We could not load your farmer profile.
+          </p>
+
+          <button
+            className="primary-btn"
+            type="button"
+            onClick={fetchFarmerProfile}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  function updateProfileField(field, value) {
+    setFarmerProfileForm((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
+  }
+
+  async function handleProfileSave(event) {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/farmer/profile`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: farmerProfileForm.name,
+            location: farmerProfileForm.location,
+            farmName: farmerProfileForm.farmName,
+            farmSize:
+              farmerProfileForm.farmSize === ""
+                ? null
+                : Number(farmerProfileForm.farmSize),
+            farmingSince:
+              farmerProfileForm.farmingSince === ""
+                ? null
+                : Number(
+                    farmerProfileForm.farmingSince
+                  ),
+            farmingType:
+              farmerProfileForm.farmingType,
+            mainCrops:
+              farmerProfileForm.mainCrops,
+            bio:
+              farmerProfileForm.bio,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to update farmer profile."
+        );
+      }
+
+      setFarmerProfileEditing(false);
+
+      await fetchFarmerProfile();
+
+      alert(
+        "Farmer profile updated successfully."
+      );
+    } catch (error) {
+      console.error(
+        "Update farmer profile error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Unable to update farmer profile."
+      );
+    }
+  }
+
+  function addCrop() {
+    if (
+      farmerProfileForm.mainCrops.length >=
+      20
+    ) {
+      return;
+    }
+
+    setFarmerProfileForm((previous) => ({
+      ...previous,
+      mainCrops: [
+        ...previous.mainCrops,
+        "",
+      ],
+    }));
+  }
+
+  function updateCrop(index, value) {
+    setFarmerProfileForm((previous) => ({
+      ...previous,
+      mainCrops:
+        previous.mainCrops.map(
+          (crop, cropIndex) =>
+            cropIndex === index
+              ? value
+              : crop
+        ),
+    }));
+  }
+
+  function removeCrop(index) {
+    setFarmerProfileForm((previous) => ({
+      ...previous,
+      mainCrops:
+        previous.mainCrops.filter(
+          (_, cropIndex) =>
+            cropIndex !== index
+        ),
+    }));
+  }
+
+  function cancelEditing() {
+    setFarmerProfileEditing(false);
+
+    setFarmerProfileForm({
+      name:
+        farmerProfile.name || "",
+      location:
+        farmerProfile.location || "",
+      farmName:
+        farmerProfile.farmName || "",
+      farmSize:
+        farmerProfile.farmSize ?? "",
+      farmingSince:
+        farmerProfile.farmingSince ?? "",
+      farmingType:
+        farmerProfile.farmingType || "",
+      mainCrops:
+        farmerProfile.mainCrops || [],
+      bio:
+        farmerProfile.bio || "",
+    });
+  }
+
+  return (
+    <div className="page-container">
+
+      {/* =====================================================
+          PROFILE PAGE HEADER
+          ===================================================== */}
+
+      <div className="page-header profile-page-heading">
+
+        <button
+          className="secondary-btn profile-back-button"
+          type="button"
+          onClick={() => setPage("farmer")}
+        >
+          ← Back to Dashboard
+        </button>
+
+        <span className="section-label">
+          FARMER PROFILE
+        </span>
+
+        <h1>
+          My Farm Profile
+        </h1>
+
+        <p>
+          Manage your farm information and
+          introduce your farm to buyers.
+        </p>
+
+      </div>
+
+      {/* =====================================================
+          MAIN PROFILE CARD
+          ===================================================== */}
+
+      <div className="my-farmer-profile-card">
+
+        <div className="farmer-profile-header">
+
+          {/* PROFILE PHOTO */}
+
+          <div className="my-profile-avatar-wrapper">
+
+            <div className="my-profile-avatar">
+
+              {farmerProfile.profilePhoto ? (
+                <img
+                  src={
+                    farmerProfile.profilePhoto
+                  }
+                  alt={`${farmerProfile.name} profile`}
+                />
+              ) : (
+                <span>
+                  {farmerProfile.name
+                    ? farmerProfile.name
+                        .charAt(0)
+                        .toUpperCase()
+                    : "F"}
+                </span>
+              )}
+
+            </div>
+
+           <>
+  <input
+    id="farmer-profile-photo-input"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    style={{ display: "none" }}
+    onChange={async (event) => {
+      const file = event.target.files?.[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Profile photo must be smaller than 5 MB.");
+        event.target.value = "";
+        return;
+      }
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please select a JPG, PNG, or WEBP image.");
+        event.target.value = "";
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+
+        formData.append(
+          "profilePhoto",
+          file
+        );
+
+        const response = await fetch(
+          `${API_URL}/api/farmer/profile/photo`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(
+            data.message ||
+              "Unable to upload profile photo."
+          );
+          return;
+        }
+
+        await fetchFarmerProfile();
+
+        alert(
+          "Profile photo uploaded successfully."
+        );
+      } catch (error) {
+        console.error(
+          "Profile photo upload error:",
+          error
+        );
+
+        alert(
+          "Unable to upload profile photo. Please try again."
+        );
+      } finally {
+        event.target.value = "";
+      }
+    }}
+  />
+
+  <button
+    type="button"
+    className="profile-photo-button"
+    title="Change profile photo"
+    onClick={() => {
+      document
+        .getElementById(
+          "farmer-profile-photo-input"
+        )
+        ?.click();
+    }}
+  >
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d="M7 7h2l1.5-2h3L15 7h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+
+      <circle
+        cx="12"
+        cy="13"
+        r="3.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+    </svg>
+  </button>
+</>
+
+          </div>
+
+          {/* PROFILE INFORMATION */}
+
+          <div className="farmer-profile-header-info">
+
+            <div className="farmer-profile-name-row">
+
+              <h2>
+                {farmerProfile.name}
+              </h2>
+
+              <span className="verified-farmer-badge">
+                <span className="verified-check">
+                  ✓
+                </span>
+
+                Verified Farmer
+              </span>
+
+            </div>
+
+            <div className="profile-contact-list">
+
+              <p className="profile-contact-item">
+
+                <span className="profile-contact-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+
+                    <circle
+                      cx="12"
+                      cy="9"
+                      r="2.2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+                  </svg>
+                </span>
+
+                {farmerProfile.location ||
+                  "Location not provided"}
+
+              </p>
+
+              <p className="profile-contact-item">
+
+                <span className="profile-contact-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="14"
+                      rx="2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+
+                    <path
+                      d="m4 7 8 6 8-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+                  </svg>
+                </span>
+
+                {farmerProfile.email ||
+                  "Email not provided"}
+
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* EDIT BUTTON */}
+
+          {!farmerProfileEditing && (
+            <button
+              className="primary-btn profile-edit-button"
+              type="button"
+              onClick={() =>
+                setFarmerProfileEditing(
+                  true
+                )
+              }
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="m4 20 4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+
+                <path
+                  d="m13.8 7.2 3 3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
+
+              Edit Profile
+            </button>
+          )}
+
+        </div>
+
+        {!farmerProfileEditing ? (
+          <>
+
+            {/* =================================================
+                FARM INFORMATION
+                ================================================= */}
+
+            <div className="profile-details-grid">
+
+              <div className="profile-detail-card">
+
+                <div className="profile-detail-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-5h6v5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+
+                <span>
+                  Farm Name
+                </span>
+
+                <strong>
+                  {farmerProfile.farmName ||
+                    "Not added"}
+                </strong>
+
+              </div>
+
+              <div className="profile-detail-card">
+
+                <div className="profile-detail-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 19c3-2 5-2 8 0s5 2 10 0M3 14c3-2 5-2 8 0s5 2 10 0M3 9c3-2 5-2 8 0s5 2 10 0"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <span>
+                  Farm Size
+                </span>
+
+                <strong>
+                  {farmerProfile.farmSize
+                    ? `${farmerProfile.farmSize} acres`
+                    : "Not added"}
+                </strong>
+
+              </div>
+
+              <div className="profile-detail-card">
+
+                <div className="profile-detail-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="4"
+                      y="5"
+                      width="16"
+                      height="16"
+                      rx="2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+
+                    <path
+                      d="M8 3v4M16 3v4M4 10h16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+
+                    <path
+                      d="M8 14h2M14 14h2M8 17h2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <span>
+                  Farming Since
+                </span>
+
+                <strong>
+                  {farmerProfile.farmingSince ||
+                    "Not added"}
+                </strong>
+
+              </div>
+
+              <div className="profile-detail-card">
+
+                <div className="profile-detail-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 21c4-4 7-7.5 7-12a7 7 0 0 0-14 0c0 4.5 3 8 7 12Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+
+                    <path
+                      d="M12 8c1.5-2 4-2 4 0 0 2-2.5 3-4 3s-4-1-4-3c0-2 2.5-2 4 0Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                </div>
+
+                <span>
+                  Farming Type
+                </span>
+
+                <strong>
+                  {farmerProfile.farmingType ||
+                    "Not added"}
+                </strong>
+
+              </div>
+
+            </div>
+
+            {/* =================================================
+                MAIN CROPS
+                ================================================= */}
+
+            <div className="profile-section profile-crops-section">
+
+              <div className="profile-section-heading">
+
+                <div className="profile-section-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 21V10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+
+                    <path
+                      d="M12 13c-4 0-6-2.5-6-6 4 0 6 2 6 6ZM12 10c0-4 2-6 6-6 0 4-2 6-6 6Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinejoin="round"
+                    />
+
+                    <path
+                      d="M9 21h6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <h3>
+                  Main Crops
+                </h3>
+
+              </div>
+
+              {farmerProfile.mainCrops?.length >
+              0 ? (
+                <div className="crop-tags">
+
+                  {farmerProfile.mainCrops.map(
+                    (crop, index) => (
+                      <span
+                        className="crop-tag"
+                        key={`${crop}-${index}`}
+                      >
+                        {crop}
+                      </span>
+                    )
+                  )}
+
+                </div>
+              ) : (
+                <p className="profile-empty-text">
+                  No crops added yet.
+                </p>
+              )}
+
+            </div>
+
+            {/* =================================================
+                ABOUT FARMER
+                ================================================= */}
+
+            <div className="profile-section profile-about-section">
+
+              <div className="profile-section-heading">
+
+                <div className="profile-section-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    />
+
+                    <path
+                      d="M12 10v6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+
+                    <circle
+                      cx="12"
+                      cy="7"
+                      r="1"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+
+                <h3>
+                  About the Farmer
+                </h3>
+
+              </div>
+
+              <p className="farmer-profile-bio">
+                {farmerProfile.bio ||
+                  "No farmer description added yet."}
+              </p>
+
+            </div>
+
+          </>
+        ) : (
+
+          /* ===================================================
+             EDIT PROFILE FORM
+             =================================================== */
+
+          <form
+            className="produce-form farmer-profile-form"
+            onSubmit={handleProfileSave}
+          >
+
+            <div className="profile-form-heading">
+
+              <h2>
+                Edit Farm Information
+              </h2>
+
+              <p>
+                Keep your farm information
+                accurate so buyers can
+                understand your profile.
+              </p>
+
+            </div>
+
+            {/* NAME */}
+
+            <label htmlFor="farmer-profile-name">
+              Name
+            </label>
+
+            <input
+              id="farmer-profile-name"
+              type="text"
+              value={
+                farmerProfileForm.name
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "name",
+                  event.target.value
+                )
+              }
+              minLength="2"
+              maxLength="100"
+              required
+            />
+
+            {/* LOCATION */}
+
+            <label htmlFor="farmer-profile-location">
+              Location
+            </label>
+
+            <input
+              id="farmer-profile-location"
+              type="text"
+              value={
+                farmerProfileForm.location
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "location",
+                  event.target.value
+                )
+              }
+              maxLength="200"
+              required
+            />
+
+            {/* FARM NAME */}
+
+            <label htmlFor="farmer-profile-farm-name">
+              Farm Name
+            </label>
+
+            <input
+              id="farmer-profile-farm-name"
+              type="text"
+              value={
+                farmerProfileForm.farmName
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "farmName",
+                  event.target.value
+                )
+              }
+              maxLength="150"
+              placeholder="e.g. Durga Farm"
+            />
+
+            {/* FARM SIZE */}
+
+            <label htmlFor="farmer-profile-farm-size">
+              Farm Size (acres)
+            </label>
+
+            <input
+              id="farmer-profile-farm-size"
+              type="number"
+              min="0"
+              step="0.01"
+              value={
+                farmerProfileForm.farmSize
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "farmSize",
+                  event.target.value
+                )
+              }
+              placeholder="e.g. 3.5"
+            />
+
+            {/* FARMING SINCE */}
+
+            <label htmlFor="farmer-profile-since">
+              Farming Since
+            </label>
+
+            <input
+              id="farmer-profile-since"
+              type="number"
+              min="1900"
+              max={
+                new Date().getFullYear()
+              }
+              value={
+                farmerProfileForm.farmingSince
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "farmingSince",
+                  event.target.value
+                )
+              }
+              placeholder="e.g. 2018"
+            />
+
+            {/* FARMING TYPE */}
+
+            <label htmlFor="farmer-profile-type">
+              Farming Type
+            </label>
+
+            <select
+              id="farmer-profile-type"
+              value={
+                farmerProfileForm.farmingType
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "farmingType",
+                  event.target.value
+                )
+              }
+            >
+              <option value="">
+                Select farming type
+              </option>
+
+              <option value="Organic">
+                Organic
+              </option>
+
+              <option value="Conventional">
+                Conventional
+              </option>
+
+              <option value="Natural">
+                Natural
+              </option>
+
+              <option value="Mixed">
+                Mixed
+              </option>
+            </select>
+
+            {/* MAIN CROPS */}
+
+            <div className="profile-crops-editor">
+
+              <div className="profile-crops-header">
+
+                <label>
+                  Main Crops
+                </label>
+
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={addCrop}
+                  disabled={
+                    farmerProfileForm
+                      .mainCrops.length >=
+                    20
+                  }
+                >
+                  + Add Crop
+                </button>
+
+              </div>
+
+              {farmerProfileForm.mainCrops.map(
+                (crop, index) => (
+                  <div
+                    className="crop-edit-row"
+                    key={index}
+                  >
+
+                    <input
+                      type="text"
+                      value={crop}
+                      maxLength="50"
+                      placeholder="e.g. Tomato"
+                      onChange={(event) =>
+                        updateCrop(
+                          index,
+                          event.target.value
+                        )
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      className="remove-crop-btn"
+                      onClick={() =>
+                        removeCrop(index)
+                      }
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+                )
+              )}
+
+            </div>
+
+            {/* BIO */}
+
+            <label htmlFor="farmer-profile-bio">
+              About Your Farm
+            </label>
+
+            <textarea
+              id="farmer-profile-bio"
+              value={
+                farmerProfileForm.bio
+              }
+              onChange={(event) =>
+                updateProfileField(
+                  "bio",
+                  event.target.value
+                )
+              }
+              maxLength="1000"
+              rows="6"
+              placeholder="Tell buyers about your farm, farming practices and produce."
+            />
+
+            {/* FORM ACTIONS */}
+
+            <div className="profile-form-actions">
+
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={cancelEditing}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="primary-btn"
+              >
+                Save Profile
+              </button>
+
+            </div>
+
+          </form>
+        )}
+
+      </div>
+    </div>
+  );
 }
 
 /* =========================================================
@@ -1688,6 +3138,7 @@ function FarmerPage({
   bulkOfferForm,
   setBulkOfferForm,
   bulkOfferLoading,
+    setPage,
 }) {
   const [editingProduce, setEditingProduce] = useState(null);
   if (!user || user.role !== "Farmer") {
@@ -1771,12 +3222,50 @@ const filteredBulkRequirements = bulkRequirements.filter(
     <div className="page-container">
       <div className="page-header">
         <span className="section-label">FARMER PORTAL</span>
-        <h1>Farmer Dashboard 🚜</h1>
+        <h1>Farmer Dashboard </h1>
         <p>
           Welcome, {user.name}. Manage your produce and incoming
           orders.
         </p>
       </div>
+      <div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "24px",
+  }}
+>
+  <button
+  className="secondary-btn"
+  type="button"
+  onClick={() => setPage("myfarmerprofile")}
+>
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    className="button-icon"
+  >
+    <circle
+      cx="12"
+      cy="8"
+      r="3.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+
+    <path
+      d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+
+  My Profile
+</button>
+</div>
 
       {message && <div className="message">{message}</div>}
 
@@ -1902,7 +3391,31 @@ const filteredBulkRequirements = bulkRequirements.filter(
                 );
               }}
             >
-              📍 Use My Farm Location
+              <span className="location-button-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="17"
+    height="17"
+  >
+    <path
+      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+
+    <circle
+      cx="12"
+      cy="9"
+      r="2.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+  </svg>
+</span>
+
+Use My Farm Location
             </button>
 
             <label htmlFor="produce-date">Harvest Date</label>
@@ -1958,11 +3471,42 @@ const filteredBulkRequirements = bulkRequirements.filter(
   <h2>My Listed Produce</h2>
 
   {myProduce.length === 0 ? (
-    <div className="empty-small">
-      <span>🌾</span>
-      <p>No produce listed yet.</p>
-    </div>
-  ) : (
+  <div className="empty-small">
+    <span className="empty-state-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path
+          d="M4 19h16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M7 19v-5m5 5V9m5 10v-8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M5 14h14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
+
+    <p>No produce listed yet.</p>
+  </div>
+) : (
     <div className="mini-list">
       {myProduce.map((item) => (
         <div className="mini-item" key={item._id}>
@@ -1972,7 +3516,32 @@ const filteredBulkRequirements = bulkRequirements.filter(
 
           <span>₹{item.price}/kg</span>
 
-          <span>📍 {item.location}</span>
+         <span className="produce-location">
+  <svg
+    viewBox="0 0 24 24"
+    width="15"
+    height="15"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+
+    <circle
+      cx="12"
+      cy="9"
+      r="2.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+  </svg>
+
+  {item.location}
+</span>
 
           <button
             className="secondary-btn"
@@ -1997,7 +3566,29 @@ const filteredBulkRequirements = bulkRequirements.filter(
               });
             }}
           >
-            ✏️ Edit
+            <svg
+  viewBox="0 0 24 24"
+  width="16"
+  height="16"
+  aria-hidden="true"
+>
+  <path
+    d="m4 20 4.2-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinejoin="round"
+  />
+
+  <path
+    d="m13.8 7.2 3 3"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+  />
+</svg>
+
+Edit
           </button>
         </div>
       ))}
@@ -2011,7 +3602,7 @@ const filteredBulkRequirements = bulkRequirements.filter(
 
       {editingProduce && (
         <div className="dashboard-card">
-          <h2>✏️ Edit Produce</h2>
+          <h2> Edit Produce</h2>
 
           <form
             className="produce-form"
@@ -2280,7 +3871,30 @@ window.location.reload();
       );
     }}
   >
-    📍 Use My Location
+    <span className="location-button-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="17"
+    height="17"
+  >
+    <path
+      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <circle
+      cx="12"
+      cy="9"
+      r="2.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+  </svg>
+</span>
+
+Use My Location
   </button>
 </div>
         </div>
@@ -2599,12 +4213,12 @@ window.location.reload();
                   <strong>Total:</strong> ₹{order.totalPrice}
                 </p>
                 <div className="transparency-box">
-                  <strong>💳 Payment</strong>
+                  <strong> Payment</strong>
                   <p>
                     Method: {order.paymentMethod === "ONLINE" ? "Online Payment" : "Cash on Delivery"}
                   </p>
                   <p>
-                    Status: {order.paymentStatus === "Paid" ? "Paid ✅" : "Payment Pending"}
+                    Status: {order.paymentStatus === "Paid" ? "Paid " : "Payment Pending"}
                   </p>
                 </div>
                 <p>
@@ -2853,7 +4467,7 @@ function MarketplacePage({
 
       <div className="nearby-location-box">
         <div>
-          <strong>📍 Find produce near you</strong>
+          <strong> Find produce near you</strong>
           <p>Use your device location to sort produce by distance.</p>
         </div>
         <button
@@ -2862,7 +4476,39 @@ function MarketplacePage({
           onClick={useMyLocation}
           disabled={locationLoading}
         >
-          {locationLoading ? "Getting Location..." : "📍 Use My Location"}
+         {locationLoading ? (
+  "Getting Location..."
+) : (
+  <>
+    <span
+      className="location-button-icon"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="17"
+        height="17"
+      >
+        <path
+          d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
+        <circle
+          cx="12"
+          cy="9"
+          r="2.2"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
+      </svg>
+    </span>
+
+    Use My Location
+  </>
+)}
         </button>
       </div>
 
@@ -2872,7 +4518,7 @@ function MarketplacePage({
 
       <div className="marketplace-filters">
         <div className="filter-search">
-          <label htmlFor="market-search">🔍 Search Produce</label>
+          <label htmlFor="market-search"> Search Produce</label>
           <input
             id="market-search"
             type="text"
@@ -2883,7 +4529,34 @@ function MarketplacePage({
         </div>
 
         <div className="filter-item">
-          <label htmlFor="market-location">📍 Location</label>
+          <label
+  htmlFor="market-location"
+  className="location-label"
+>
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <circle
+      cx="12"
+      cy="9"
+      r="2.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+  </svg>
+
+  Location
+</label>
           <select
             id="market-location"
             value={location}
@@ -2948,12 +4621,49 @@ function MarketplacePage({
         )}
       </div>
 
-      {availableProduce.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">🌾</div>
-          <h2>No produce available</h2>
-          <p>Farmers haven&apos;t listed any produce yet.</p>
-        </div>
+     {availableProduce.length === 0 ? (
+  <div className="empty-state">
+    <div
+      className="empty-icon"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="32"
+        height="32"
+      >
+        <path
+          d="M12 20V5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+
+    <h2>No produce available</h2>
+
+    <p>
+      Farmers haven&apos;t listed any produce yet.
+    </p>
+  </div>
       ) : filteredProduce.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">🔍</div>
@@ -2993,11 +4703,11 @@ function MarketplacePage({
 
               <div className="produce-meta">
                 <p>
-                  <strong>📍 Location:</strong> {item.location}
+                  <strong> Location:</strong> {item.location}
                 </p>
                 {item.distanceKm !== undefined && (
                   <p>
-                    <strong>📏 Distance:</strong>{" "}
+                    <strong> Distance:</strong>{" "}
                     {item.distanceKm === null
                       ? "Location coordinates not available"
                       : `${item.distanceKm.toFixed(1)} km away`}
@@ -3014,7 +4724,7 @@ function MarketplacePage({
               {item.farmerId && (
                 <>
                   <div className="transparency-box">
-                    <strong>👨‍🌾 Farmer</strong>
+                    <strong> Farmer</strong>
                     <p>Name: {item.farmerId.name}</p>
                     <p>Location: {item.farmerId.location}</p>
                   </div>
@@ -3024,7 +4734,7 @@ function MarketplacePage({
                     type="button"
                     onClick={() => openFarmerProfile(item.farmerId)}
                   >
-                    👨‍🌾 View Farmer
+                     View Farmer
                   </button>
                 </>
               )}
@@ -3104,16 +4814,16 @@ function FarmerProfile({
     <div className="page-container">
       <div className="page-header">
         <span className="section-label">FARMER PROFILE</span>
-        <h1>👨‍🌾 {farmer.name}</h1>
+        <h1> {farmer.name}</h1>
         <p>Connect directly with a farmer on FarmConnect.</p>
       </div>
 
       <div className="dashboard-grid">
         <div className="dashboard-card">
-          <div className="farmer-profile-avatar">👨‍🌾</div>
+          <div className="farmer-profile-avatar"></div>
           <h2>{farmer.name}</h2>
           <p>
-            <strong>📍 Location:</strong> {farmer.location || "Not provided"}
+            <strong> Location:</strong> {farmer.location || "Not provided"}
           </p>
           <p>
             <strong>✉️ Email:</strong> {farmer.email || "Not provided"}
@@ -3133,9 +4843,43 @@ function FarmerProfile({
 
           {farmerProduce.length === 0 ? (
             <div className="empty-small">
-              <span>🌾</span>
-              <p>No currently available produce.</p>
-            </div>
+  <span
+    className="empty-state-icon"
+    aria-hidden="true"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+    >
+      <path
+        d="M4 19h16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+
+      <path
+        d="M7 19v-5m5 5V9m5 10v-8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+
+      <path
+        d="M5 14h14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  </span>
+
+  <p>No currently available produce.</p>
+</div>
           ) : (
             <div className="mini-list">
               {farmerProduce.map((item) => (
@@ -3294,7 +5038,7 @@ function RetailerPage({
           RETAILER PORTAL
         </span>
 
-        <h1>Retailer Portal 🏪</h1>
+        <h1>Retailer Portal </h1>
 
         <p>
           Purchase agricultural produce in bulk directly
@@ -3450,7 +5194,30 @@ function RetailerPage({
           );
         }}
       >
-        📍 Use My Delivery Location
+        <span className="location-button-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="17"
+    height="17"
+  >
+    <path
+      d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <circle
+      cx="12"
+      cy="9"
+      r="2.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+  </svg>
+</span>
+
+Use My Delivery Location
       </button>
 
       <label htmlFor="bulk-required-by">
@@ -3563,7 +5330,7 @@ function OrderPage({
     <div className="page-container">
       <div className="page-header">
         <span className="section-label">CHECKOUT</span>
-        <h1>Place Order 📦</h1>
+        <h1>Place Order </h1>
         <p>Buy directly from the farmer.</p>
       </div>
 
@@ -3571,7 +5338,37 @@ function OrderPage({
 
       <div className="order-page-grid">
         <div className="selected-produce">
-          <div className="produce-card-icon">🌾</div>
+         <div className="produce-card-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="28"
+    height="28"
+  >
+    <path
+      d="M12 20V5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+
+    <path
+      d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinejoin="round"
+    />
+
+    <path
+      d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinejoin="round"
+    />
+  </svg>
+</div>
 
           <h2>{selectedProduce.name}</h2>
 
@@ -3592,12 +5389,40 @@ function OrderPage({
 
           {selectedProduce.farmerId && (
             <div className="transparency-box">
-              <strong>👨‍🌾 Farmer</strong>
-              <p>Name: {selectedProduce.farmerId.name}</p>
-              <p>
-                Location: {selectedProduce.farmerId.location}
-              </p>
-            </div>
+  <strong className="transparency-title">
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="8"
+        r="3.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <path
+        d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+
+    Farmer
+  </strong>
+
+  <p>Name: {selectedProduce.farmerId.name}</p>
+
+  <p>
+    Location: {selectedProduce.farmerId.location}
+  </p>
+</div>
           )}
 
           <div className="transparency-box">
@@ -3657,7 +5482,7 @@ function OrderPage({
           />
 
           <div className="payment-section">
-            <h3>💳 Payment Method</h3>
+            <h3> Payment Method</h3>
 
             <label className="payment-option">
               <input
@@ -3670,7 +5495,7 @@ function OrderPage({
                 }
               />
               <span>
-                <strong>💵 Cash on Delivery</strong>
+                <strong>Cash on Delivery</strong>
                 <small>Pay when your produce is delivered.</small>
               </span>
             </label>
@@ -3686,7 +5511,7 @@ function OrderPage({
                 }
               />
               <span>
-                <strong>💳 Online Payment</strong>
+                <strong> Online Payment</strong>
                 <small>
                   Pay securely using Razorpay — UPI, cards and
                   supported online methods.
@@ -3761,7 +5586,7 @@ function MyOrdersPage({
     <div className="page-container">
       <div className="page-header">
         <span className="section-label">ORDERS</span>
-        <h1>My Orders 📦</h1>
+        <h1>My Orders </h1>
         <p>Orders connected to your FarmConnect account.</p>
       </div>
 
@@ -3769,7 +5594,7 @@ function MyOrdersPage({
 
       {buyerOrders.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">📦</div>
+          <div className="empty-icon"></div>
           <h2>No orders yet</h2>
           <p>
             Your orders will appear here after you purchase
@@ -3807,18 +5632,18 @@ function MyOrdersPage({
               </p>
 
               <div className="transparency-box">
-                <strong>💳 Payment</strong>
+                <strong> Payment</strong>
                 <p>
                   Method: {order.paymentMethod === "ONLINE" ? "Online Payment" : "Cash on Delivery"}
                 </p>
                 <p>
-                  Status: {order.paymentStatus === "Paid" ? "Paid ✅" : "Payment Pending"}
+                  Status: {order.paymentStatus === "Paid" ? "Paid " : "Payment Pending"}
                 </p>
               </div>
 
               {order.farmerId && (
                 <div className="transparency-box">
-                  <strong>👨‍🌾 Farmer</strong>
+                  <strong>Farmer</strong>
                   <p>Name: {order.farmerId.name}</p>
                   <p>Location: {order.farmerId.location}</p>
                 </div>
@@ -3877,214 +5702,381 @@ function App() {
     useState("Consumer");
 
   const [orderQuantity, setOrderQuantity] = useState(1);
-  const [buyerName, setBuyerName] = useState("");
+
+  const [buyerName, setBuyerName] =
+    useState("");
+
   const [buyerLocation, setBuyerLocation] =
     useState("");
 
   const [paymentMethod, setPaymentMethod] =
     useState("COD");
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [bulkRequirements, setBulkRequirements] = useState([]);
-const [bulkLoading, setBulkLoading] = useState(false);
-const [selectedBulkRequirement, setSelectedBulkRequirement] =
-  useState(null);
+  const [loading, setLoading] =
+    useState(false);
 
-const [bulkOfferForm, setBulkOfferForm] = useState({
-  offeredQuantity: "",
-  offeredPrice: "",
-  message: "",
-});
+  const [message, setMessage] =
+    useState("");
 
-const [bulkOfferLoading, setBulkOfferLoading] =
-  useState(false);
-  const [farmerLocation, setFarmerLocation] = useState({
-  latitude: null,
-  longitude: null,
-});
+  /* =========================================================
+     BULK REQUIREMENTS
+     ========================================================= */
 
-const [bulkDistance, setBulkDistance] = useState("50");
-const [bulkLocationFilter, setBulkLocationFilter] =
-  useState("");
+  const [bulkRequirements, setBulkRequirements] =
+    useState([]);
 
-  const [authForm, setAuthForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    location: "",
-    role: "Consumer",
-  });
+  const [bulkLoading, setBulkLoading] =
+    useState(false);
 
- const [produceForm, setProduceForm] =
-  useState({
-    name: "",
-    quantity: "",
-    price: "",
-    location: "",
-    harvestDate: "",
-    farmingMethod: "",
-    pesticide: "",
-    image: null,
-  });
+  const [selectedBulkRequirement, setSelectedBulkRequirement] =
+    useState(null);
+
+  const [bulkOfferForm, setBulkOfferForm] =
+    useState({
+      offeredQuantity: "",
+      offeredPrice: "",
+      message: "",
+    });
+
+  const [bulkOfferLoading, setBulkOfferLoading] =
+    useState(false);
+
+  const [farmerLocation, setFarmerLocation] =
+    useState({
+      latitude: null,
+      longitude: null,
+    });
+
+  const [bulkDistance, setBulkDistance] =
+    useState("50");
+
+  const [bulkLocationFilter, setBulkLocationFilter] =
+    useState("");
+
+  /* =========================================================
+     FARMER PROFILE
+     ========================================================= */
+
+  const [farmerProfile, setFarmerProfile] =
+    useState(null);
+
+  const [farmerProfileLoading, setFarmerProfileLoading] =
+    useState(false);
+
+  const [farmerProfileEditing, setFarmerProfileEditing] =
+    useState(false);
+
+  const [farmerProfileForm, setFarmerProfileForm] =
+    useState({
+      name: "",
+      location: "",
+      farmName: "",
+      farmSize: "",
+      farmingSince: "",
+      farmingType: "",
+      mainCrops: [],
+      bio: "",
+    });
+
+  /* =========================================================
+     AUTH FORM
+     ========================================================= */
+
+  const [authForm, setAuthForm] =
+    useState({
+      name: "",
+      email: "",
+      password: "",
+      location: "",
+      role: "Consumer",
+    });
+
+  /* =========================================================
+     PRODUCE FORM
+     ========================================================= */
+
+  const [produceForm, setProduceForm] =
+    useState({
+      name: "",
+      quantity: "",
+      price: "",
+      location: "",
+      harvestDate: "",
+      farmingMethod: "",
+      pesticide: "",
+      image: null,
+    });
 
   /* -------------------------------------------------------
-     FETCH PRODUCE
-     ------------------------------------------------------- */
+   FETCH PRODUCE
+   ------------------------------------------------------- */
 
-  async function fetchProduce() {
-    try {
-      const response = await fetch(
-        `${API_URL}/api/produce`
-      );
+async function fetchProduce() {
+  try {
+    const response = await fetch(
+      `${API_URL}/api/produce`
+    );
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        setProduce(data);
-      }
-    } catch (error) {
-      console.error("Fetch produce error:", error);
+    if (response.ok) {
+      setProduce(data);
     }
+  } catch (error) {
+    console.error(
+      "Fetch produce error:",
+      error
+    );
   }
-
-  async function fetchMyProduce() {
-    if (!token) return;
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/produce/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMyProduce(data);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Fetch my produce error:", error);
-    }
-  }
-
-  async function fetchOrders() {
-    if (!token || !user || user.role !== "Farmer") {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/orders`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setOrders(data);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Fetch farmer orders error:", error);
-    }
-  }
-
-  async function fetchMyOrders() {
-    if (
-      !token ||
-      !user ||
-      (user.role !== "Consumer" &&
-        user.role !== "Retailer")
-    ) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/orders/my`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setBuyerOrders(data);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Fetch my orders error:", error);
-    }
-  }
-  async function fetchBulkRequirements() {
-    if (!token || !user || user.role !== "Farmer") {
-      return;
-    }
-
-    try {
-      setBulkLoading(true);
-
-      const response = await fetch(
-        `${API_URL}/api/bulk-requirements`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setBulkRequirements(data.requirements || []);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error(
-        "Fetch bulk requirements error:",
-        error
-      );
-    } finally {
-      setBulkLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchProduce();
-  }, []);
-
-  useEffect(() => {
-    if (!token || !user) return;
-
-    if (
-      user.role === "Consumer" ||
-      user.role === "Retailer"
-    ) {
-      fetchMyOrders();
-    }
-
-    if (user.role === "Farmer") {
-  fetchOrders();
-  fetchMyProduce();
-  fetchBulkRequirements();
 }
-  }, [token, user]);
+
+
+async function fetchMyProduce() {
+  if (!token) return;
+
+  try {
+    const response = await fetch(
+      `${API_URL}/api/produce/my`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setMyProduce(data);
+    } else {
+      console.error(data.message);
+    }
+  } catch (error) {
+    console.error(
+      "Fetch my produce error:",
+      error
+    );
+  }
+}
+
+
+/* -------------------------------------------------------
+   FETCH FARMER PROFILE
+   ------------------------------------------------------- */
+
+async function fetchFarmerProfile() {
+  if (
+    !token ||
+    !user ||
+    user.role !== "Farmer"
+  ) {
+    return;
+  }
+
+  setFarmerProfileLoading(true);
+
+  try {
+    const response = await fetch(
+      `${API_URL}/api/farmer/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Farmer profile error:",
+        data.message
+      );
+      return;
+    }
+
+    setFarmerProfile(data.profile);
+
+    setFarmerProfileForm({
+      name: data.profile.name || "",
+      location:
+        data.profile.location || "",
+      farmName:
+        data.profile.farmName || "",
+      farmSize:
+        data.profile.farmSize ?? "",
+      farmingSince:
+        data.profile.farmingSince ?? "",
+      farmingType:
+        data.profile.farmingType || "",
+      mainCrops:
+        data.profile.mainCrops || [],
+      bio:
+        data.profile.bio || "",
+    });
+  } catch (error) {
+    console.error(
+      "Fetch farmer profile error:",
+      error
+    );
+  } finally {
+    setFarmerProfileLoading(false);
+  }
+}
+
+
+/* -------------------------------------------------------
+   FETCH FARMER ORDERS
+   ------------------------------------------------------- */
+
+async function fetchOrders() {
+  if (
+    !token ||
+    !user ||
+    user.role !== "Farmer"
+  ) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}/api/orders`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setOrders(data);
+    } else {
+      console.error(data.message);
+    }
+  } catch (error) {
+    console.error(
+      "Fetch farmer orders error:",
+      error
+    );
+  }
+}
+
+
+/* -------------------------------------------------------
+   FETCH BUYER ORDERS
+   ------------------------------------------------------- */
+
+async function fetchMyOrders() {
+  if (
+    !token ||
+    !user ||
+    (
+      user.role !== "Consumer" &&
+      user.role !== "Retailer"
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}/api/orders/my`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setBuyerOrders(data);
+    } else {
+      console.error(data.message);
+    }
+  } catch (error) {
+    console.error(
+      "Fetch my orders error:",
+      error
+    );
+  }
+}
+
+
+/* -------------------------------------------------------
+   FETCH BULK REQUIREMENTS
+   ------------------------------------------------------- */
+
+async function fetchBulkRequirements() {
+  if (
+    !token ||
+    !user ||
+    user.role !== "Farmer"
+  ) {
+    return;
+  }
+
+  try {
+    setBulkLoading(true);
+
+    const response = await fetch(
+      `${API_URL}/api/bulk-requirements`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setBulkRequirements(
+        data.requirements || []
+      );
+    } else {
+      console.error(data.message);
+    }
+  } catch (error) {
+    console.error(
+      "Fetch bulk requirements error:",
+      error
+    );
+  } finally {
+    setBulkLoading(false);
+  }
+}
+
+
+/* -------------------------------------------------------
+   INITIAL DATA LOAD
+   ------------------------------------------------------- */
+
+useEffect(() => {
+  fetchProduce();
+}, []);
+
+
+useEffect(() => {
+  if (!token || !user) return;
+
+  if (
+    user.role === "Consumer" ||
+    user.role === "Retailer"
+  ) {
+    fetchMyOrders();
+  }
+
+  if (user.role === "Farmer") {
+    fetchOrders();
+    fetchMyProduce();
+    fetchBulkRequirements();
+    fetchFarmerProfile();
+  }
+}, [token, user]);
 
   /* -------------------------------------------------------
      LOGIN
@@ -4131,7 +6123,7 @@ const [bulkLocationFilter, setBulkLocationFilter] =
       setToken(data.token);
       setUser(data.user);
 
-      setMessage("Login successful! 🌱");
+      setMessage("Login successful!");
 
       if (data.user.role === "Farmer") {
         setPage("farmer");
@@ -4198,7 +6190,7 @@ const [bulkLocationFilter, setBulkLocationFilter] =
       setToken(data.token);
       setUser(data.user);
 
-      setMessage("Account created successfully! 🌱");
+      setMessage("Account created successfully!");
 
       if (data.user.role === "Farmer") {
         setPage("farmer");
@@ -4311,7 +6303,7 @@ const [bulkLocationFilter, setBulkLocationFilter] =
         return;
       }
 
-      setMessage("Produce added successfully! 🌾");
+      setMessage("Produce added successfully!");
 
       setProduceForm({
         name: "",
@@ -4366,7 +6358,7 @@ const [bulkLocationFilter, setBulkLocationFilter] =
 
   if (!Number.isFinite(availableQuantity) || availableQuantity <= 0) {
     setMessage(
-      "Sorry, this produce has just been sold out. 🌾"
+      "Sorry, this produce has just been sold out."
     );
 
     // Refresh marketplace data
@@ -4444,7 +6436,7 @@ if (
   currentAvailableQuantity <= 0
 ) {
   setMessage(
-    "Sorry, this produce has just been sold out. 🌾"
+    "Sorry, this produce has just been sold out."
   );
 
   setSelectedProduce(null);
@@ -4741,6 +6733,7 @@ setSelectedBulkRequirement={setSelectedBulkRequirement}
 bulkOfferForm={bulkOfferForm}
 setBulkOfferForm={setBulkOfferForm}
 bulkOfferLoading={bulkOfferLoading}
+   setPage={setPage}
           />
         );
 
@@ -4765,6 +6758,21 @@ bulkOfferLoading={bulkOfferLoading}
             setPage={setPage}
           />
         );
+        case "myfarmerprofile":
+  return (
+    <MyFarmerProfile
+      user={user}
+      farmerProfile={farmerProfile}
+      farmerProfileLoading={farmerProfileLoading}
+      farmerProfileEditing={farmerProfileEditing}
+      setFarmerProfileEditing={setFarmerProfileEditing}
+      farmerProfileForm={farmerProfileForm}
+      setFarmerProfileForm={setFarmerProfileForm}
+      fetchFarmerProfile={fetchFarmerProfile}
+      token={token}
+      setPage={setPage}
+    />
+  );
 
       case "retailer":
         return (
