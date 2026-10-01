@@ -1705,35 +1705,7 @@ function HomePage({ user, setPage }) {
           <div className="step-card modern-step-card">
             <div className="step-number">01</div>
             <div className="step-icon" aria-hidden="true">
-  <svg
-    viewBox="0 0 24 24"
-    width="26"
-    height="26"
-  >
-    <path
-      d="M12 20V5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-    />
-
-    <path
-      d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinejoin="round"
-    />
-
-    <path
-      d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinejoin="round"
-    />
-  </svg>
+  <span style={{ fontSize: "26px", lineHeight: 1 }}>🚚</span>
 </div>
 
             <h3>Farmer Lists Produce</h3>
