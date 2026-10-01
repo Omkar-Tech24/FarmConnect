@@ -1153,9 +1153,27 @@ function HomePage({ user, setPage }) {
     HERO
 ===================================================== */}
 
-<section className="hero hero-modern">
+<section className="hero hero-modern hero-farm-background">
 
-  {/* LEFT SIDE */}
+  {/* FARM BACKGROUND */}
+  <div
+    className="hero-background-image"
+    aria-hidden="true"
+  >
+    <img
+      src="/images/farm-background.png"
+      alt=""
+    />
+  </div>
+
+  {/* BACKGROUND OVERLAY */}
+  <div
+    className="hero-background-overlay"
+    aria-hidden="true"
+  ></div>
+
+
+  {/* HERO CONTENT */}
   <div className="hero-content">
 
     <div className="hero-badge">
@@ -1199,92 +1217,199 @@ function HomePage({ user, setPage }) {
 
     </div>
 
-    
   </div>
 
 
-  {/* RIGHT SIDE */}
-  <div className="hero-photo-area">
+  {/* TOP FLOATING CARD */}
+  <div className="hero-background-card hero-card-top">
 
-    <div className="hero-photo-frame">
+    <div className="hero-card-icon">
 
-      <img
-        src="/images/hero-farmer.jpg"
-        alt="Indian farmer working in an agricultural field"
-        className="hero-farmer-image"
-      />
+      <svg
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z" />
+        <path d="M5 20c3-5 7-8 13-11" />
+      </svg>
 
-      <div className="photo-overlay"></div>
+    </div>
 
-      <div className="photo-location">
+    <div>
+      <strong>Fresh Produce</strong>
+      <small>Direct from the farm</small>
+    </div>
 
-        <div className="location-icon">
-          <span>●</span>
-        </div>
+  </div>
 
-        <div>
-          <strong>Indian Farms</strong>
-          <small>Fresh produce • Local farmers</small>
-        </div>
 
+  {/* BOTTOM FLOATING CARD */}
+  <div className="hero-background-card hero-card-bottom">
+
+    <div className="hero-card-icon">
+
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M20 6 9 17l-5-5" />
+      </svg>
+
+    </div>
+
+    <div>
+      <strong>Transparent</strong>
+      <small>Know where your food comes from</small>
+    </div>
+
+  </div>
+
+
+  {/* BOTTOM TRUST BAR */}
+  <div className="hero-trust-bar">
+
+    {/* FRESH PRODUCE */}
+    <div className="hero-trust-item">
+
+      <div className="hero-trust-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          width="23"
+          height="23"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20 4C12 4 6 7.5 6 14c0 3.5 2.5 6 6 6 6.5 0 8-8 8-16Z" />
+          <path d="M5 20c3-5 7-8 13-11" />
+        </svg>
+
+      </div>
+
+      <div>
+        <strong>Fresh Produce</strong>
+        <span>Direct from farms</span>
       </div>
 
     </div>
 
 
-    {/* FLOATING CARD 1 */}
-    <div className="hero-floating-card card-top">
-
-  <div className="floating-icon" aria-hidden="true">
-    <svg
-      viewBox="0 0 24 24"
-      width="24"
-      height="24"
-    >
-      <path
-        d="M12 20V5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-
-      <path
-        d="M12 9C8.5 9 6.5 7.3 6 4.5 9.5 4.5 11.5 6 12 9Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
-
-      <path
-        d="M12 14c3.5 0 5.5-1.7 6-4.5-3.5 0-5.5 1.7-6 4.5Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </div>
-
-  <div>
-    <strong>Fresh Produce</strong>
-    <small>Direct from the farm</small>
-  </div>
-
-</div>
+    <div className="hero-trust-divider"></div>
 
 
-    {/* FLOATING CARD 2 */}
-    <div className="hero-floating-card card-bottom">
+    {/* TRANSPARENT */}
+    <div className="hero-trust-item">
 
-      <div className="floating-check">
-        ✓
+      <div className="hero-trust-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          width="23"
+          height="23"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 3 20 6v5c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-3Z" />
+          <path d="m8.5 12 2.3 2.3 4.7-5" />
+        </svg>
+
       </div>
 
       <div>
         <strong>Transparent</strong>
-        <small>Know where your food comes from</small>
+        <span>Know your food</span>
+      </div>
+
+    </div>
+
+
+    <div className="hero-trust-divider"></div>
+
+
+    {/* FAIR PRICES */}
+    <div className="hero-trust-item">
+
+      <div className="hero-trust-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          width="23"
+          height="23"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 6h11v11H3z" />
+          <path d="M14 10h4l3 3v4h-7z" />
+          <circle cx="7" cy="19" r="2" />
+          <circle cx="18" cy="19" r="2" />
+        </svg>
+
+      </div>
+
+      <div>
+        <strong>Fair Prices</strong>
+        <span>Better value for everyone</span>
+      </div>
+
+    </div>
+
+
+    <div className="hero-trust-divider"></div>
+
+
+    {/* SUPPORT FARMERS */}
+    <div className="hero-trust-item">
+
+      <div className="hero-trust-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          width="23"
+          height="23"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="9" cy="8" r="3" />
+          <circle cx="17" cy="9" r="2.5" />
+          <path d="M3 19c0-3 2.7-5 6-5s6 2 6 5" />
+          <path d="M14 15c2.8-.2 5 1.4 5 4" />
+        </svg>
+
+      </div>
+
+      <div>
+        <strong>Support Farmers</strong>
+        <span>Empowering rural communities</span>
       </div>
 
     </div>

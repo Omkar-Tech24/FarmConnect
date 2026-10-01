@@ -1972,4 +1972,748 @@ button.voice-floating-button .voice-floating-label {
   .voice-floating-label {
     font-size: 13px !important;
   }
+}/* =========================================================
+   FARMCONNECT HERO — FULL FARM BACKGROUND
+   ========================================================= */
+
+.hero-farm-background {
+  position: relative !important;
+  min-height: 720px !important;
+  padding: 90px 7% 150px !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  overflow: hidden !important;
+
+  isolation: isolate !important;
+
+  color: #ffffff !important;
+}
+
+
+/* ---------------------------------------------------------
+   FARM IMAGE
+   --------------------------------------------------------- */
+
+.hero-background-image {
+  position: absolute !important;
+  inset: 0 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  z-index: -3 !important;
+}
+
+.hero-background-image img {
+  width: 100% !important;
+  height: 100% !important;
+
+  display: block !important;
+
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+
+/* ---------------------------------------------------------
+   IMAGE OVERLAY
+   --------------------------------------------------------- */
+
+.hero-background-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+
+  z-index: -2 !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(9, 39, 20, 0.88) 0%,
+      rgba(9, 39, 20, 0.68) 34%,
+      rgba(9, 39, 20, 0.30) 68%,
+      rgba(9, 39, 20, 0.12) 100%
+    ) !important;
+}
+
+
+/* ---------------------------------------------------------
+   HERO CONTENT
+   --------------------------------------------------------- */
+
+.hero-farm-background .hero-content {
+  position: relative !important;
+  z-index: 5 !important;
+
+  width: min(700px, 100%) !important;
+
+  margin: 0 !important;
+}
+
+
+/* Badge */
+
+.hero-farm-background .hero-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+
+  width: fit-content !important;
+
+  padding: 9px 15px !important;
+  margin-bottom: 24px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 999px !important;
+
+  background: rgba(255, 255, 255, 0.13) !important;
+
+  color: #ffffff !important;
+
+  font-size: 12px !important;
+  font-weight: 800 !important;
+
+  letter-spacing: 1.2px !important;
+
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.hero-farm-background .hero-badge-dot {
+  width: 8px !important;
+  height: 8px !important;
+
+  flex: 0 0 8px !important;
+
+  border-radius: 50% !important;
+
+  background: #b8e3a8 !important;
+
+  box-shadow: 0 0 0 5px rgba(184, 227, 168, 0.14) !important;
+}
+
+
+/* Main heading */
+
+.hero-farm-background h1 {
+  max-width: 760px !important;
+
+  margin: 0 !important;
+
+  color: #ffffff !important;
+
+  font-size: clamp(48px, 6vw, 78px) !important;
+
+  line-height: 0.98 !important;
+
+  letter-spacing: -3.5px !important;
+
+  font-weight: 850 !important;
+
+  text-shadow:
+    0 3px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+.hero-farm-background h1 span {
+  display: block !important;
+
+  color: #b9e79f !important;
+}
+
+
+/* Description */
+
+.hero-farm-background .hero-description {
+  max-width: 650px !important;
+
+  margin: 27px 0 30px !important;
+
+  color: rgba(255, 255, 255, 0.90) !important;
+
+  font-size: 18px !important;
+
+  line-height: 1.7 !important;
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.20) !important;
+}
+
+
+/* ---------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------- */
+
+.hero-farm-background .hero-buttons {
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 13px !important;
+
+  flex-wrap: wrap !important;
+}
+
+.hero-farm-background .hero-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+
+  min-height: 50px !important;
+
+  padding: 0 22px !important;
+
+  border: 1px solid #2f7d46 !important;
+
+  border-radius: 11px !important;
+
+  background: #2f7d46 !important;
+
+  color: #ffffff !important;
+
+  font-weight: 800 !important;
+
+  box-shadow:
+    0 12px 30px rgba(12, 52, 25, 0.30) !important;
+}
+
+.hero-farm-background .hero-primary:hover {
+  background: #276a3b !important;
+
+  transform: translateY(-2px) !important;
+}
+
+.hero-farm-background .hero-secondary {
+  min-height: 50px !important;
+
+  padding: 0 21px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+
+  border-radius: 11px !important;
+
+  background: rgba(255, 255, 255, 0.12) !important;
+
+  color: #ffffff !important;
+
+  font-weight: 800 !important;
+
+  backdrop-filter: blur(9px) !important;
+  -webkit-backdrop-filter: blur(9px) !important;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.hero-farm-background .hero-secondary:hover {
+  background: rgba(255, 255, 255, 0.20) !important;
+
+  transform: translateY(-2px) !important;
+}
+
+
+/* ---------------------------------------------------------
+   FLOATING CARDS
+   --------------------------------------------------------- */
+
+.hero-background-card {
+  position: absolute !important;
+  z-index: 8 !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 11px !important;
+
+  min-width: 210px !important;
+
+  padding: 13px 15px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.30) !important;
+
+  border-radius: 15px !important;
+
+  background: rgba(255, 255, 255, 0.92) !important;
+
+  color: #173b22 !important;
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.20) !important;
+
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.hero-background-card strong {
+  display: block !important;
+
+  margin-bottom: 3px !important;
+
+  font-size: 14px !important;
+
+  color: #173b22 !important;
+}
+
+.hero-background-card small {
+  display: block !important;
+
+  color: #66766b !important;
+
+  font-size: 11px !important;
+
+  line-height: 1.35 !important;
+}
+
+.hero-card-icon {
+  width: 39px !important;
+  height: 39px !important;
+
+  flex: 0 0 39px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 11px !important;
+
+  background: #e7f3e8 !important;
+
+  color: #2f7d46 !important;
+}
+
+.hero-card-top {
+  top: 120px !important;
+  right: 8% !important;
+}
+
+.hero-card-bottom {
+  right: 15% !important;
+  bottom: 150px !important;
+}
+
+
+/* ---------------------------------------------------------
+   TRUST BAR
+   --------------------------------------------------------- */
+
+.hero-trust-bar {
+  position: absolute !important;
+
+  left: 7% !important;
+  right: 7% !important;
+  bottom: 32px !important;
+
+  z-index: 7 !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr
+    auto
+    1fr
+    auto
+    1fr !important;
+
+  align-items: center !important;
+
+  gap: 22px !important;
+
+  padding: 18px 22px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+
+  border-radius: 18px !important;
+
+  background: rgba(8, 34, 18, 0.56) !important;
+
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.20) !important;
+
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.hero-trust-item {
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 11px !important;
+
+  min-width: 0 !important;
+}
+
+.hero-trust-icon {
+  width: 40px !important;
+  height: 40px !important;
+
+  flex: 0 0 40px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid rgba(184, 227, 168, 0.30) !important;
+
+  border-radius: 11px !important;
+
+  background: rgba(184, 227, 168, 0.12) !important;
+
+  color: #c4eaae !important;
+}
+
+.hero-trust-item strong {
+  display: block !important;
+
+  margin-bottom: 3px !important;
+
+  color: #ffffff !important;
+
+  font-size: 13px !important;
+
+  font-weight: 800 !important;
+}
+
+.hero-trust-item span {
+  display: block !important;
+
+  color: rgba(255, 255, 255, 0.68) !important;
+
+  font-size: 10px !important;
+
+  line-height: 1.3 !important;
+}
+
+.hero-trust-divider {
+  width: 1px !important;
+  height: 34px !important;
+
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+  .hero-farm-background {
+    min-height: 760px !important;
+
+    padding:
+      90px 6% 180px !important;
+
+    align-items: flex-start !important;
+  }
+
+  .hero-farm-background h1 {
+    font-size: clamp(44px, 9vw, 65px) !important;
+
+    letter-spacing: -2.5px !important;
+  }
+
+  .hero-card-top {
+    top: auto !important;
+    right: 6% !important;
+    bottom: 150px !important;
+  }
+
+  .hero-card-bottom {
+    display: none !important;
+  }
+
+  .hero-trust-bar {
+    left: 6% !important;
+    right: 6% !important;
+
+    grid-template-columns: 1fr 1fr !important;
+
+    gap: 15px !important;
+
+    padding: 16px !important;
+  }
+
+  .hero-trust-divider {
+    display: none !important;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .hero-farm-background {
+    min-height: 820px !important;
+
+    padding:
+      75px 5% 215px !important;
+  }
+
+  .hero-farm-background h1 {
+    font-size: 45px !important;
+
+    line-height: 1 !important;
+
+    letter-spacing: -2px !important;
+  }
+
+  .hero-farm-background .hero-description {
+    font-size: 15px !important;
+
+    line-height: 1.6 !important;
+  }
+
+  .hero-farm-background .hero-buttons {
+    flex-direction: column !important;
+
+    align-items: stretch !important;
+  }
+
+  .hero-farm-background .hero-primary,
+  .hero-farm-background .hero-secondary {
+    width: 100% !important;
+  }
+
+  .hero-card-top {
+    left: 5% !important;
+    right: auto !important;
+
+    bottom: 155px !important;
+
+    min-width: 190px !important;
+  }
+
+  .hero-trust-bar {
+    left: 5% !important;
+    right: 5% !important;
+    bottom: 20px !important;
+
+    grid-template-columns: 1fr !important;
+
+    gap: 12px !important;
+
+    border-radius: 15px !important;
+  }
+
+  .hero-trust-item {
+    width: 100% !important;
+  }
+}/* Fix hero content being hidden behind navbar */
+.hero-farm-background {
+  margin-top: 0 !important;
+  align-items: flex-start !important;
+  padding-top: 55px !important;
+}
+/* Final hero spacing adjustment */
+.hero-farm-background {
+  min-height: 650px !important;
+  padding-top: 45px !important;
+  padding-bottom: 125px !important;
+}
+
+.hero-farm-background h1 {
+  font-size: clamp(46px, 5.5vw, 70px) !important;
+  line-height: 1 !important;
+}
+
+.hero-farm-background .hero-description {
+  margin-top: 22px !important;
+  margin-bottom: 26px !important;
+}
+
+.hero-trust-bar {
+  bottom: 22px !important;
+}/* =========================================================
+   FARMCONNECT HERO — FINAL COLOR & VISIBILITY
+   ========================================================= */
+
+.hero-farm-background {
+  min-height: 650px !important;
+  padding: 55px 7% 135px !important;
+  align-items: flex-start !important;
+}
+
+/* Better image visibility */
+.hero-background-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 38, 20, 0.82) 0%,
+      rgba(7, 38, 20, 0.62) 32%,
+      rgba(7, 38, 20, 0.25) 65%,
+      rgba(7, 38, 20, 0.08) 100%
+    ) !important;
+}
+
+/* Badge */
+.hero-farm-background .hero-badge {
+  margin-top: 0 !important;
+  margin-bottom: 22px !important;
+  background: rgba(27, 82, 43, 0.72) !important;
+  border: 1px solid rgba(211, 244, 193, 0.55) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Main heading */
+.hero-farm-background h1 {
+  color: #ffffff !important;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.28) !important;
+}
+
+.hero-farm-background h1 span {
+  color: #c8f59d !important;
+  text-shadow: 0 3px 15px rgba(0, 0, 0, 0.22) !important;
+}
+
+/* Description */
+.hero-farm-background .hero-description {
+  color: #f4faf2 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Primary button */
+.hero-farm-background .hero-primary {
+  background: #2f8f4e !important;
+  border-color: #2f8f4e !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 25px rgba(17, 70, 32, 0.38) !important;
+}
+
+.hero-farm-background .hero-primary:hover {
+  background: #267940 !important;
+  border-color: #267940 !important;
+}
+
+/* Secondary button */
+.hero-farm-background .hero-secondary {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14) !important;
+}
+
+.hero-farm-background .hero-secondary:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Floating cards */
+.hero-background-card {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  color: #173b22 !important;
+  box-shadow: 0 15px 35px rgba(10, 45, 20, 0.22) !important;
+}
+
+.hero-background-card strong {
+  color: #173b22 !important;
+}
+
+.hero-background-card small {
+  color: #637368 !important;
+}
+
+.hero-card-icon {
+  background: #e6f5e5 !important;
+  color: #278044 !important;
+}
+
+/* =========================================================
+   TRUST BAR
+   ========================================================= */
+
+.hero-trust-bar {
+  left: 7% !important;
+  right: 7% !important;
+  bottom: 22px !important;
+
+  padding: 16px 20px !important;
+
+  background: rgba(9, 48, 25, 0.88) !important;
+  border: 1px solid rgba(190, 231, 174, 0.35) !important;
+
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.25) !important;
+
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Trust icons */
+.hero-trust-icon {
+  background: #dff1d8 !important;
+  border: 1px solid #b8dcae !important;
+  color: #267642 !important;
+}
+
+/* Trust titles */
+.hero-trust-item strong {
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+/* Trust descriptions */
+.hero-trust-item span {
+  color: #c9ddc8 !important;
+  font-size: 10px !important;
+}
+
+/* Dividers */
+.hero-trust-divider {
+  background: rgba(213, 237, 205, 0.25) !important;
+}
+
+/* AI Assistant */
+.voice-floating-button {
+  background: #ffffff !important;
+  color: #246c3b !important;
+  border: 1px solid #c5ddc6 !important;
+  box-shadow: 0 10px 28px rgba(25, 75, 35, 0.20) !important;
+}
+
+.voice-floating-label {
+  color: #246c3b !important;
+}
+/* =========================================================
+   TRUST BAR — HIGH CONTRAST
+   ========================================================= */
+
+.hero-farm-background .hero-trust-bar {
+  background: rgba(6, 48, 24, 0.94) !important;
+  border: 1px solid rgba(190, 235, 172, 0.45) !important;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.30) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.hero-farm-background .hero-trust-item {
+  background: transparent !important;
+}
+
+.hero-farm-background .hero-trust-icon {
+  background: #dff4d5 !important;
+  border: none !important;
+  color: #24783e !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+.hero-farm-background .hero-trust-item strong {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+}
+
+.hero-farm-background .hero-trust-item span {
+  color: #cce6c9 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+
+.hero-farm-background .hero-trust-divider {
+  background: rgba(215, 239, 205, 0.30) !important;
 }
