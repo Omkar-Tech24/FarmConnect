@@ -1572,29 +1572,27 @@ function HomePage({ user, setPage }) {
 
         <div className="feature-grid modern-feature-grid">
           <div className="feature-card modern-feature-card">
-           <div
-  className="feature-icon"
-  aria-hidden="true"
-  style={{
-    background: "#ffffff",
-    border: "1px solid #d9d9d9",
-  }}
->
-  <img
-    src="https://cdn-icons-png.flaticon.com/512/2909/2909761.png"
-    alt=""
-    width="30"
-    height="30"
-    style={{
-      display: "block",
-      width: "30px",
-      height: "30px",
-      objectFit: "contain",
-      filter: "grayscale(1)",
-    }}
-  />
+           <div className="feature-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M20 4C11 4 5 7.5 5 14c0 3.5 2.5 6 6 6 6.5 0 9-6 9-16Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 20c2-5 5-8 10-10"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
 </div>
-
             <span className="feature-number">01</span>
 
             <h3>Direct From Farmers</h3>
@@ -1610,7 +1608,21 @@ function HomePage({ user, setPage }) {
           </div>
 
           <div className="feature-card modern-feature-card">
-            <div className="feature-icon">₹</div>
+           <div className="feature-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M7 5h10M7 9h10M9 5c3 0 5 1.5 5 4s-2 4-5 4h-2l7 6"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</div>
 
             <span className="feature-number">02</span>
 
@@ -1627,7 +1639,33 @@ function HomePage({ user, setPage }) {
           </div>
 
           <div className="feature-card modern-feature-card">
-            <div className="feature-icon">🔍</div>
+            <div className="feature-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="11"
+      cy="11"
+      r="6.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <path
+      d="M16 16L21 21"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <path
+      d="M8.5 11h5M11 8.5v5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  </svg>
+</div>
 
             <span className="feature-number">03</span>
 
