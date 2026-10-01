@@ -1814,165 +1814,6 @@ button.voice-floating-button .voice-floating-label {
   pointer-events: none !important;
 }
 /* =========================================================
-   AI ASSISTANT - TEXT BUTTON
-   ========================================================= */
-
-button.voice-floating-button {
-  position: fixed !important;
-  right: 24px !important;
-  bottom: 24px !important;
-  top: auto !important;
-  left: auto !important;
-
-  width: auto !important;
-  min-width: 150px !important;
-  height: 48px !important;
-
-  padding: 0 20px !important;
-
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 9px !important;
-
-  border: 1px solid #c9dfce !important;
-  border-radius: 24px !important;
-
-  background: #ffffff !important;
-  color: #245d35 !important;
-
-  box-shadow: 0 8px 24px rgba(35, 85, 45, 0.16) !important;
-
-  font-size: 14px !important;
-  font-weight: 700 !important;
-
-  cursor: pointer !important;
-}
-
-button.voice-floating-button:hover {
-  background: #f4faf5 !important;
-  transform: translateY(-2px);
-}
-
-button.voice-floating-button svg {
-  width: 20px !important;
-  height: 20px !important;
-}
-
-button.voice-floating-button .voice-floating-label {
-  position: static !important;
-  display: inline !important;
-
-  width: auto !important;
-
-  padding: 0 !important;
-  margin: 0 !important;
-
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-
-  color: #245d35 !important;
-
-  font-size: 14px !important;
-  font-weight: 700 !important;
-
-  transform: none !important;
-}
-/* =========================================================
-   AI ASSISTANT - TEXT ONLY FLOATING BUTTON
-   ========================================================= */
-
-.voice-floating-button {
-  position: fixed !important;
-  right: 24px !important;
-  bottom: 24px !important;
-  top: auto !important;
-  left: auto !important;
-
-  width: auto !important;
-  min-width: 150px !important;
-  height: 48px !important;
-
-  padding: 0 20px !important;
-
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  background: #ffffff !important;
-  color: #245d35 !important;
-
-  border: 1px solid #c9dfce !important;
-  border-radius: 24px !important;
-
-  box-shadow: 0 8px 24px rgba(35, 85, 45, 0.16) !important;
-
-  font-size: 14px !important;
-  font-weight: 700 !important;
-
-  cursor: pointer !important;
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease !important;
-
-  z-index: 99999 !important;
-}
-
-.voice-floating-button:hover {
-  background: #f4faf5 !important;
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 12px 28px rgba(35, 85, 45, 0.20) !important;
-}
-
-.voice-floating-label {
-  position: static !important;
-
-  display: block !important;
-
-  width: auto !important;
-  height: auto !important;
-
-  margin: 0 !important;
-  padding: 0 !important;
-
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-
-  box-shadow: none !important;
-
-  color: #245d35 !important;
-
-  font-size: 14px !important;
-  font-weight: 700 !important;
-
-  white-space: nowrap !important;
-
-  transform: none !important;
-
-  pointer-events: none !important;
-}
-
-@media (max-width: 600px) {
-  .voice-floating-button {
-    right: 16px !important;
-    bottom: 18px !important;
-
-    min-width: 135px !important;
-    height: 44px !important;
-
-    padding: 0 16px !important;
-  }
-
-  .voice-floating-label {
-    font-size: 13px !important;
-  }
-}/* =========================================================
    FARMCONNECT HERO — FULL FARM BACKGROUND
    ========================================================= */
 
@@ -2716,4 +2557,317 @@ button.voice-floating-button .voice-floating-label {
 
 .hero-farm-background .hero-trust-divider {
   background: rgba(215, 239, 205, 0.30) !important;
+}
+/* WHY FARMCONNECT - FEATURE ICONS */
+.feature-icon {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  background: #e7f4e5;
+  color: #2f7d32;
+  border: 1px solid #c9e2c7;
+  box-sizing: border-box;
+}
+
+.feature-icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  stroke: currentColor;
+  overflow: visible;
+}
+
+/* FINAL AI ASSISTANT GREEN OVERRIDE */
+button.voice-floating-button,
+.voice-floating-button {
+  background: #2f8f4e !important;
+  color: #ffffff !important;
+  border: 1px solid #2f8f4e !important;
+}
+
+button.voice-floating-button .voice-floating-label,
+.voice-floating-label {
+  color: #ffffff !important;
+}
+
+button.voice-floating-button:hover,
+.voice-floating-button:hover {
+  background: #267940 !important;
+  color: #ffffff !important;
+  border-color: #267940 !important;
+}
+/* =========================================================
+   AI ASSISTANT - FINAL TEXT ONLY BUTTON
+   ========================================================= */
+
+.voice-floating-button {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  top: auto !important;
+  left: auto !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: auto !important;
+  min-width: 140px !important;
+  height: 48px !important;
+
+  padding: 0 20px !important;
+
+  background: #2f8f4e !important;
+  background-image: none !important;
+
+  color: #ffffff !important;
+
+  border: 1px solid #2f8f4e !important;
+  border-radius: 24px !important;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+
+  z-index: 99999 !important;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease !important;
+}
+
+/* Remove old icon */
+.voice-floating-button::before,
+.voice-floating-button::after {
+  content: none !important;
+  display: none !important;
+}
+
+.voice-floating-button svg {
+  display: none !important;
+}
+
+/* AI Assistant text */
+.voice-floating-button .voice-floating-label,
+.voice-floating-label {
+  position: static !important;
+
+  display: block !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  color: #ffffff !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+  white-space: nowrap !important;
+
+  transform: none !important;
+
+  pointer-events: none !important;
+}
+
+/* Hover */
+.voice-floating-button:hover {
+  background: #267940 !important;
+  background-image: none !important;
+
+  color: #ffffff !important;
+  border-color: #267940 !important;
+
+  transform: translateY(-2px) !important;
+
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22) !important;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .voice-floating-button {
+    right: 16px !important;
+    bottom: 18px !important;
+
+    min-width: 135px !important;
+    height: 44px !important;
+
+    padding: 0 16px !important;
+  }
+
+  .voice-floating-button .voice-floating-label,
+  .voice-floating-label {
+    font-size: 13px !important;
+  }
+}
+/* =========================================================
+   FARMCONNECT AI ASSISTANT - FINAL
+   ========================================================= */
+
+button.voice-floating-button {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  top: auto !important;
+  left: auto !important;
+
+  width: 140px !important;
+  height: 48px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: #2f8f4e !important;
+  color: #ffffff !important;
+
+  border: 1px solid #2f8f4e !important;
+  border-radius: 24px !important;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+
+  z-index: 999999 !important;
+}
+
+button.voice-floating-button svg,
+button.voice-floating-button img,
+button.voice-floating-button::before,
+button.voice-floating-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+button.voice-floating-button .voice-floating-label {
+  position: static !important;
+
+  display: block !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  color: #ffffff !important;
+
+  border: none !important;
+  box-shadow: none !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+  white-space: nowrap !important;
+
+  transform: none !important;
+}
+
+button.voice-floating-button:hover {
+  background: #267940 !important;
+  border-color: #267940 !important;
+  color: #ffffff !important;
+
+  transform: translateY(-2px) !important;
+
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22) !important;
+}
+
+@media (max-width: 600px) {
+  button.voice-floating-button {
+    right: 16px !important;
+    bottom: 18px !important;
+
+    width: 135px !important;
+    height: 44px !important;
+  }
+
+  button.voice-floating-button .voice-floating-label {
+    font-size: 13px !important;
+  }
+}
+/* =========================================================
+   FIX MISSING HOME PAGE ICONS
+   DIRECT FROM FARMERS + DELIVERY
+   ========================================================= */
+
+/* ---------- 01 DIRECT FROM FARMERS ---------- */
+
+.modern-feature-card:first-child .feature-icon {
+  position: relative !important;
+  font-size: 0 !important;
+  color: #2f7d46 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modern-feature-card:first-child .feature-icon::before {
+  content: "" !important;
+
+  width: 30px !important;
+  height: 30px !important;
+
+  display: block !important;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 8C21 13 14 23 14 34c0 10 8 18 18 18s18-8 18-18C50 23 43 13 32 8Z' stroke='%232f7d46' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M32 52V25' stroke='%232f7d46' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M32 36c-6-1-10-4-13-9' stroke='%232f7d46' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+}
+
+
+/* ---------- 04 DELIVERY ---------- */
+
+.modern-step-card:nth-child(4) .step-icon {
+  position: relative !important;
+
+  font-size: 0 !important;
+  color: transparent !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modern-step-card:nth-child(4) .step-icon::before {
+  content: "" !important;
+
+  width: 32px !important;
+  height: 32px !important;
+
+  display: block !important;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M6 18h34v27H6V18Z' stroke='%232f7d46' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M40 27h10l8 9v9H40V27Z' stroke='%232f7d46' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='17' cy='49' r='6' stroke='%232f7d46' stroke-width='4'/%3E%3Ccircle cx='49' cy='49' r='6' stroke='%232f7d46' stroke-width='4'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
 }

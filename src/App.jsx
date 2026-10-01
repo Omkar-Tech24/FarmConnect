@@ -1572,7 +1572,28 @@ function HomePage({ user, setPage }) {
 
         <div className="feature-grid modern-feature-grid">
           <div className="feature-card modern-feature-card">
-            <div className="feature-icon"></div>
+           <div
+  className="feature-icon"
+  aria-hidden="true"
+  style={{
+    background: "#ffffff",
+    border: "1px solid #d9d9d9",
+  }}
+>
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/2909/2909761.png"
+    alt=""
+    width="30"
+    height="30"
+    style={{
+      display: "block",
+      width: "30px",
+      height: "30px",
+      objectFit: "contain",
+      filter: "grayscale(1)",
+    }}
+  />
+</div>
 
             <span className="feature-number">01</span>
 
@@ -1719,7 +1740,25 @@ function HomePage({ user, setPage }) {
 
           <div className="step-card modern-step-card">
             <div className="step-number">03</div>
-            <div className="step-icon">🤝</div>
+            <div className="step-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4 7h5l3 3-2 2-3-2" />
+    <path d="M20 7h-5l-3 3 2 2 3-2" />
+    <path d="M7 10l-2 2 5 5c1 1 2.5 1 3.5 0l1.5-1.5" />
+    <path d="M17 10l2 2-5 5" />
+    <path d="M9 15l2 2" />
+    <path d="M12 14l2 2" />
+  </svg>
+</div>
 
             <h3>Farmer Accepts</h3>
 
@@ -1731,7 +1770,23 @@ function HomePage({ user, setPage }) {
 
           <div className="step-card modern-step-card">
             <div className="step-number">04</div>
-            <div className="step-icon"></div>
+            <div className="step-icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 6h11v11H3z" />
+    <path d="M14 10h4l3 3v4h-7z" />
+    <circle cx="7" cy="19" r="2" />
+    <circle cx="18" cy="19" r="2" />
+  </svg>
+</div>
 
             <h3>Delivery</h3>
 
